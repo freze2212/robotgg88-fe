@@ -1,0 +1,596 @@
+/* Trang /casino/lobby — HACK SEXY BACCARAT */
+
+.casino-lobby-page {
+  min-height: 100vh;
+}
+
+/* Nền cũ: khối container-fluid lobby-bg (như HomeCasino / lobby trước đổi UI) */
+.casino-lobby-page .lobby-bg {
+  background-size: cover;
+  background-position: center;
+}
+
+/* Marquee sát ngay dưới header — bỏ khoảng trống */
+.casino-lobby-page .home-marquee--lobby.home-marquee--tight {
+  margin-top: 0;
+  margin-bottom: 0;
+  border-top: none;
+}
+
+/* Khối BACK + tiêu đề + status — nằm trên nền lobby-bg, không phủ nền cyber riêng */
+.casino-lobby-hero {
+  position: relative;
+  width: 100%;
+  padding: 8px 0 24px;
+  box-sizing: border-box;
+  overflow: hidden;
+  background: transparent;
+  border-bottom: 1px solid rgba(0, 229, 255, 0.15);
+  margin-bottom: 20px;
+}
+
+.casino-lobby-hero__inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Nút BACK: absolute — chỉnh --back-top / --back-left (px) để đặt tự do, mặc định = vị trí cũ */
+.casino-lobby-back {
+  position: absolute;
+  top: var(--back-top, 0);
+  left: var(--back-left, 0);
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px 10px 14px;
+  margin: 0;
+  border: 1px solid rgba(0, 255, 225, 0.55);
+  border-radius: 10px;
+  background: rgba(0, 12, 14, 0.85);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow:
+    0 0 16px rgba(0, 229, 255, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition: filter 0.2s ease, transform 0.15s ease;
+}
+
+.casino-lobby-back:hover {
+  filter: brightness(1.1);
+}
+
+.casino-lobby-back:active {
+  transform: scale(0.98);
+}
+
+.casino-lobby-back__icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  display: block;
+}
+
+.casino-lobby-title {
+  text-align: center;
+  font-family: "Roboto", system-ui, sans-serif;
+  font-size: 59.76px;
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0;
+  color: #ffffff;
+  text-transform: uppercase;
+  text-shadow: 0 0 38.6px #00ffe1;
+}
+
+@media (max-width: 640px) {
+  .casino-lobby-title {
+    font-size: clamp(1.5rem, 8vw, 59.76px);
+  }
+}
+
+/* Thanh SEVER | STATUS */
+.casino-lobby-status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px 12px;
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid #00ffe1;
+  background: rgba(0, 8, 10, 0.75);
+  box-shadow:
+    0 0 18px rgba(0, 229, 255, 0.15),
+    inset 0 0 20px rgba(0, 60, 55, 0.2);
+  font-family: ui-monospace, "Cascadia Code", "Segoe UI", monospace;
+  font-size: clamp(0.75rem, 2vw, 0.9rem);
+  font-weight: 600;
+  color: #e8f4f2;
+}
+
+.casino-lobby-status__sep {
+  opacity: 0.7;
+  font-weight: 400;
+}
+
+.casino-lobby-status__gold {
+  color: #ffe066;
+  text-shadow: 0 0 10px rgba(255, 224, 102, 0.4);
+}
+
+.casino-lobby-status__online {
+  color: #3dff7a;
+  text-shadow: 0 0 12px rgba(61, 255, 122, 0.45);
+  font-weight: 800;
+}
+
+/* Lưới bàn — 3 thẻ / hàng (desktop), nền bg-result 445×280 */
+.casino-lobby-tables {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  justify-items: center;
+  gap: 16px 20px;
+  padding: 8px 16px 32px;
+  max-width: calc(445px * 3 + 20px * 2);
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+
+.casino-lobby-table-card {
+  width: 100%;
+  max-width: 445px;
+  height: 312px;
+  max-height: 312px;
+  box-sizing: border-box;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  /* Khung + bo góc nằm trong ảnh bg-result — không thêm border CSS */
+  border: none;
+  border-radius: 0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  /* Lề an toàn — chỉnh để khối header + stats + lưới khớp mockup (ảnh 2) */
+  padding: 38px 18px 12px 18px;
+  overflow: hidden;
+  transition: filter 0.2s ease;
+}
+
+/* Không dùng scale — overflow:hidden cắt nội dung, nom như phải hover mới “đủ” */
+.casino-lobby-table-card:hover {
+  filter: brightness(1.05);
+}
+
+.casino-lobby-table-card:active {
+  filter: brightness(0.98);
+}
+
+.casino-lobby-table-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  min-height: 0;
+  flex: 1;
+}
+
+/* Khối kết quả (ô P/H/B + lưới + VIP) — “modal-result” */
+.casino-lobby-modal-result {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 15px;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Thanh tên bàn + LIVE — trong thẻ bg-result, không nền đen, luôn hiển thị */
+.casino-lobby-table-card__topbar {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+  background: transparent;
+  position: relative;
+  z-index: 1;
+}
+
+.casino-lobby-table-card__title-row {
+  min-width: 0;
+  font-family: "Roboto", system-ui, sans-serif;
+  font-size: 16px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.casino-lobby-table-card__label-baccarat {
+  color: #ffffff;
+  text-shadow:
+    0 0 6px rgba(0, 0, 0, 0.75),
+    0 1px 2px rgba(0, 0, 0, 0.9);
+}
+
+.casino-lobby-table-card__table-name {
+  color: #ffe066;
+  text-shadow:
+    0 0 8px rgba(255, 224, 102, 0.45),
+    0 1px 3px rgba(0, 0, 0, 0.85);
+}
+
+.casino-lobby-table-card__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  flex-shrink: 0;
+}
+
+.casino-lobby-table-card__live-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #39ff14;
+  box-shadow:
+    0 0 6px #39ff14,
+    0 0 10px rgba(57, 255, 20, 0.65);
+}
+
+.casino-lobby-table-card__live-text {
+  font-family: "Roboto", system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #39ff14;
+  text-shadow:
+    0 0 8px rgba(57, 255, 20, 0.6),
+    0 1px 2px rgba(0, 0, 0, 0.85);
+}
+
+/* Tổng P / HÒA / B — viền cyan, không nền đen */
+.casino-lobby-table-card__stats {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: flex-start;
+  width: 170px;
+  max-width: 100%;
+  height: 50px;
+  box-sizing: border-box;
+  gap: 8px;
+  padding: 5px 8px;
+  background: transparent;
+  border: 1px solid #00ffe1;
+  border-radius: 6px;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 1px rgba(0, 255, 225, 0.15);
+}
+
+.casino-lobby-table-card__stat-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-width: 0;
+  line-height: 1;
+}
+
+.casino-lobby-table-card__stat-num {
+  font-family: "Roboto", system-ui, sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.casino-lobby-table-card__stat-caption {
+  font-family: "Roboto", system-ui, sans-serif;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin-top: 0;
+}
+
+.casino-lobby-table-card__stat-col--player .casino-lobby-table-card__stat-num {
+  color: #00ffe1;
+}
+
+.casino-lobby-table-card__stat-col--player .casino-lobby-table-card__stat-caption {
+  color: #00ffe1;
+}
+
+.casino-lobby-table-card__stat-col--tie .casino-lobby-table-card__stat-num {
+  color: #3dff7a;
+}
+
+.casino-lobby-table-card__stat-col--tie .casino-lobby-table-card__stat-caption {
+  color: #3dff7a;
+}
+
+.casino-lobby-table-card__stat-col--banker .casino-lobby-table-card__stat-num {
+  color: #ff4d4d;
+}
+
+.casino-lobby-table-card__stat-col--banker .casino-lobby-table-card__stat-caption {
+  color: #ff4d4d;
+}
+
+/* Hàng: lưới + VIP — không flex-grow (tránh kéo dài xuống dưới đáy bảng) */
+.casino-lobby-table-card__mid {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 14px;
+  flex: 0 1 auto;
+  width: 100%;
+}
+
+.casino-lobby-table-card__grid-wrap {
+  flex: 1;
+  min-width: 0;
+  overflow: visible;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.casino-lobby-table-card__vip {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0;
+  width: 108px;
+  align-self: stretch;
+  min-height: 0;
+  padding-top: 0;
+}
+
+.casino-lobby-table-card__supervip-img {
+  display: block;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  max-height: 34px;
+  object-fit: contain;
+  flex-shrink: 0;
+  margin-bottom: 12px;
+}
+
+/* Text thay ảnh SUPER VIP: TỶ LỆ THẮNG / RỦI RO CAO */
+.casino-lobby-table-card__vip-head {
+  font-family: "Roboto", system-ui, sans-serif;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-align: center;
+  line-height: 1.15;
+  flex-shrink: 0;
+  width: 100%;
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.casino-lobby-table-card__vip-head--normal {
+  color: #39ff14;
+  text-shadow: 0 0 6px rgba(57, 255, 20, 0.4);
+  font-size: 14px;
+}
+
+.casino-lobby-table-card__vip-head--below80 {
+  color: red;
+  font-size: 14px;
+}
+
+.casino-lobby-table-card__vip-head--unknown {
+  color: rgba(255, 255, 255, 0.55);
+  text-shadow: none;
+}
+/* Nút WIN + % — to, vát 2 góc; đáy khớp đáy bảng nhờ __vip-fill */
+.casino-lobby-table-card__win-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  min-width: 88px;
+  min-height: 0;
+  padding: 24px 30px 24px;
+  background: #ffe600;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Super VIP (ảnh): nút vàng như mặc định */
+.casino-lobby-table-card__win-badge--supervip {
+  background: #ffe600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.casino-lobby-table-card__win-badge--supervip .casino-lobby-table-card__win-label,
+.casino-lobby-table-card__win-badge--supervip .casino-lobby-table-card__win-pct {
+  color: #111;
+}
+
+.casino-lobby-table-card__win-badge--normal {
+  background: #00ff6e;
+}
+
+.casino-lobby-table-card__win-badge--normal .casino-lobby-table-card__win-label {
+  color: #000;
+}
+
+.casino-lobby-table-card__win-badge--normal .casino-lobby-table-card__win-pct {
+  color: #000;
+}
+
+/* <80%: nền tối + viền / glow #00ff6e, chữ WIN + % #00ff6e */
+.casino-lobby-table-card__win-badge--below80 {
+  background: red;
+}
+
+.casino-lobby-table-card__win-badge--below80 .casino-lobby-table-card__win-label,
+.casino-lobby-table-card__win-badge--below80 .casino-lobby-table-card__win-pct {
+  color: #fff;
+}
+
+.casino-lobby-table-card__win-badge--unknown .casino-lobby-table-card__win-label,
+.casino-lobby-table-card__win-badge--unknown .casino-lobby-table-card__win-pct {
+  color: #111;
+}
+
+.casino-lobby-table-card__win-label {
+  font-family: "Roboto", system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 900;
+  color: #111;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  margin: 0;
+  padding: 0;
+}
+
+.casino-lobby-table-card__win-pct {
+  font-family: "Roboto", system-ui, sans-serif;
+  font-size: 28px;
+  font-weight: 900;
+  color: #111;
+  line-height: 1;
+  margin-top: 1px;
+  padding: 0;
+}
+
+/* ResultTable compact — 12 cột luôn vừa khung (table-layout:fixed), không bị cắt cột */
+.result-table--compact {
+  margin: 0;
+  line-height: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow: visible;
+}
+
+.result-table--compact__table {
+  width: 100%;
+  max-width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  background: #f3f4f6;
+  border: 1px solid #9ca3af;
+}
+
+.result-table--compact__cell {
+  box-sizing: border-box;
+  width: 8.333333%;
+  height: 22px;
+  padding: 0;
+  border: 0.5px solid #d1d5db;
+  vertical-align: middle;
+  text-align: center;
+  background: #ffffff;
+}
+
+.result-table--compact__symbol {
+  display: block;
+  margin: 0 auto;
+  width: 14px;
+  height: 14px;
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+}
+
+/* 2 cột — màn hẹp hơn */
+@media (max-width: 1024px) {
+  .casino-lobby-tables {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: calc(445px * 2 + 20px);
+  }
+}
+
+/* 1 cột — mobile */
+@media (max-width: 640px) {
+  .casino-lobby-tables {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+  }
+
+  .casino-lobby-table-card {
+    max-width: 445px;
+    height: auto;
+    min-height: 312px;
+    max-height: none;
+    aspect-ratio: 445 / 312;
+    padding: 20px clamp(14px, 5.8vw, 26px) clamp(10px, 4.5vw, 20px);
+  }
+}
+
+/* Hero: tránh nút BACK đè tiêu đề trên mobile */
+@media (max-width: 640px) {
+  .casino-lobby-hero {
+    padding: 12px 0 18px;
+  }
+
+  .casino-lobby-hero__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 0 8px;
+  }
+
+  .casino-lobby-back {
+    position: relative;
+    top: auto;
+    left: auto;
+    align-self: flex-start;
+  }
+
+  .casino-lobby-title {
+    margin-top: 0;
+    padding: 0 4px;
+  }
+
+  .casino-lobby-status {
+    max-width: 100%;
+    width: 100%;
+    justify-content: center;
+    padding: 10px 12px;
+    box-sizing: border-box;
+  }
+
+  .casino-lobby-tables {
+    padding-left: max(8px, env(safe-area-inset-left, 0px));
+    padding-right: max(8px, env(safe-area-inset-right, 0px));
+  }
+}
+
+@media (max-width: 380px) {
+  .casino-lobby-table-card__title-row {
+    font-size: 14px;
+  }
+
+  .casino-lobby-table-card__win-pct {
+    font-size: 22px;
+  }
+}
+

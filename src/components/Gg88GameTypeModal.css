@@ -1,0 +1,136 @@
+/* Popup CHỌN LOẠI GAME — GG88 (bg-modal + 2 nút gradient) */
+
+.gg88-game-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  box-sizing: border-box;
+}
+
+.gg88-game-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: rgba(0, 8, 10, 0.82);
+  backdrop-filter: blur(4px);
+  cursor: pointer;
+}
+
+.gg88-game-modal__panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 460px;
+  min-height: 280px;
+  padding: 0;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+  background-color: #040d0c;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 100% 100%;
+  animation: gg88-game-modal-in 0.28s ease-out;
+}
+
+@keyframes gg88-game-modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.gg88-game-modal__inner {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 0;
+  padding: clamp(24px, 8%, 44px) clamp(20px, 6%, 36px) clamp(24px, 8%, 44px);
+  gap: clamp(20px, 4vw, 28px);
+}
+
+.gg88-game-modal__title {
+  margin: 0;
+  width: 100%;
+  text-align: center;
+  font-family: "Roboto", system-ui, sans-serif;
+  font-size: clamp(1.15rem, 3.5vw, 1.45rem);
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: #ffe066;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 12px rgba(255, 224, 102, 0.55),
+    0 0 24px rgba(255, 180, 0, 0.25);
+  line-height: 1.2;
+}
+
+.gg88-game-modal__actions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+  width: 100%;
+  max-width: 320px;
+}
+
+.gg88-game-modal__choice {
+  display: block;
+  width: 100%;
+  padding: 16px 24px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: "Roboto", system-ui, sans-serif;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  background: linear-gradient(
+    180deg,
+    #00d4c4 0%,
+    #00a896 45%,
+    #008f82 100%
+  );
+  box-shadow:
+    0 0 16px rgba(0, 255, 200, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition:
+    filter 0.2s ease,
+    transform 0.15s ease;
+}
+
+.gg88-game-modal__choice:hover {
+  filter: brightness(1.08);
+}
+
+.gg88-game-modal__choice:active {
+  transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gg88-game-modal__panel {
+    animation: none;
+  }
+}

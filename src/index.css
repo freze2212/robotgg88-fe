@@ -1,0 +1,163 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* === Mobile / responsive foundation === */
+html {
+  /* Firefox: thanh cuộn trung tính */
+  scrollbar-width: thin;
+  scrollbar-color: #b0b0b0 #e8e8e8;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  overflow-x: clip;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+}
+
+#root {
+  min-height: 100vh;
+  min-height: 100dvh;
+  isolation: isolate;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+img,
+video {
+  max-width: 100%;
+  height: auto;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.custom-text {
+  color: white;
+}
+
+/* Nút Quay lại - theo design: gradient, viền cyan, bo góc */
+.box-goto-lobby {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  width: 189px;
+  height: 48px;
+  padding: 12px 62px;
+  border-radius: 8.75px;
+  border: 2px solid #00FFE1;
+  background: linear-gradient(90deg, #FFFFFF 0%, #00FFE1 100%);
+  color: #111;
+  font-weight: 600;
+  text-decoration: none;
+  transition: filter 0.2s, transform 0.2s;
+}
+
+.box-goto-lobby:hover {
+  filter: brightness(1.05);
+  transform: scale(1.02);
+}
+
+@media (max-width: 640px) {
+  .box-goto-lobby {
+    width: min(100%, 320px);
+    max-width: 100%;
+    height: auto;
+    min-height: 48px;
+    padding: 12px 28px;
+  }
+}
+
+/* Modal loading/processing theo ảnh 2: nền teal, viền vàng nhạt, 2 chấm cyan + cam */
+.swal-loading-modal.swal2-popup {
+  background-color: #046a53 !important;
+  background-image: none !important;
+  border-radius: 12px !important;
+  padding: 32px 40px !important;
+  box-shadow: inset 0 0 0 1px rgba(200, 220, 120, 0.45);
+  max-width: 380px;
+}
+.swal-loading-modal #swal2-title {
+  color: #fff !important;
+  font-weight: 700 !important;
+  font-size: 1.5rem !important;
+  margin-bottom: 8px;
+}
+.swal-loading-modal .swal-loading-subtext {
+  color: #d4a84b !important;
+  font-size: 1rem !important;
+  font-weight: 400;
+  margin: 0 0 16px 0;
+}
+.swal-loading-modal .swal-loading-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 12px;
+}
+.swal-loading-modal .swal-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  animation: swal-dot-pulse 0.8s ease-in-out infinite;
+}
+.swal-loading-modal .swal-dot-orange {
+  background-color: #f0a030;
+  animation-delay: 0.2s;
+}
+.swal-loading-modal .swal-dot-cyan {
+  background-color: #00d4ff;
+}
+@keyframes swal-dot-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.2); opacity: 0.8; }
+}
+.swal-loading-modal .swal2-loader {
+  display: none !important;
+}
+
+@media only screen and (max-width: 1200px) {
+  header .menu .menu_wrapper_active {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    overflow: auto;
+    padding: 15vh 24px 24px;
+    gap: 12px;
+    max-width: 360px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    height: 100vh;
+  }
+  header .menu .menu_wrapper_active .menu-item {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    padding: 0 20px;
+    min-height: 48px;
+    width: 100%;
+    box-sizing: border-box;
+    justify-content: center;
+  }
+}

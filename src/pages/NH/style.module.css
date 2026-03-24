@@ -1,0 +1,620 @@
+.searchItemGame {
+    width: 100%;
+    max-width: 100%;
+    height: 48px;
+    padding: 0 16px;
+    color: white;
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid #fff;
+    border-radius: 20px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.searchItemGame::placeholder {
+    color: #fff;
+    opacity: 1;
+}
+
+.searchItemGame:focus {
+    background-color: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.searchItemGame:focus {
+    border: 1px solid #fff !important;
+}
+
+.loadTime {
+    font-size: 18px;
+    margin-top: -30px;
+    margin-bottom: 15px;
+}
+
+.detailGameInner {
+    background-image: url("https://trumcasino6789.com/images/sdsdsdsd1.png");
+    background-repeat: no-repeat;
+    background-size: 100% 100% !important;
+    background-position: center;
+    height: 590px;
+    border-radius: unset !important;
+    border: 1px solid #00FF84 !important;
+    padding: 40px !important;
+    background-color: unset !important;
+    /* max-width: 1100px; */
+    display: flex;
+}
+
+.avtartTable {
+    width: 280px;
+    background-size: 100% 100% !important;
+}
+
+.marquee-container {
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.containerDetail {
+    padding: 20px 20px 20px 20px;
+}
+
+.imgTitleTable {
+    height: 90px !important;
+    width: 90px !important;
+}
+
+.marqueeContainer {
+    width: 400px;
+    overflow: hidden;
+    position: relative;
+    height: 90px;
+    border: 1px solid transparent;
+}
+
+.marqueeContent {
+    position: absolute;
+    white-space: nowrap;
+    animation: marquee 30s linear infinite;
+    color: white;
+    font-size: 40px;
+    font-weight: bold;
+    left: 100%;
+    transform: translateX(0);
+}
+
+@keyframes marquee {
+    0% {
+        left: 100;
+        transform: translateX(0);
+    }
+
+    100% {
+        left: 0;
+        transform: translateX(-100%);
+    }
+}
+
+
+.timeTable {
+    position: relative;
+    background-repeat: no-repeat;
+    background-position: left center;
+    width: 550px;
+    height: 40px;
+    margin-top: 40px;
+    background-size: contain;
+}
+
+.fontCountdown {
+    background: linear-gradient(180deg, rgba(146, 228, 76, 1) 26%, rgba(77, 221, 78, 1) 74%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    position: absolute;
+    white-space: nowrap;
+    font-weight: bold;
+}
+
+.fontStatusCountdown {
+    left: 24px;
+    top: -30%;
+    transform: translateY(-50%);
+    font-size: 25px;
+}
+
+.fontCountdown:not(.fontStatusCountdown) {
+    left: 100%;
+    font-size: 60px;
+    margin-left: -340px;
+    top: -15%;
+    transform: translateY(-50%);
+}
+
+
+/* Vòng tròn xoay */
+.circularCountdown {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    background-size: contain;
+    background-repeat: no-repeat;
+    animation: spin 3s linear infinite;
+    width: 110px;
+    height: 110px;
+    top: -60%;
+    left: 93%;
+}
+
+@keyframes spin {
+    from {
+        transform: translate(-50%, -50%) rotate(0deg);
+    }
+
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+.btnShowTimeRound {
+    margin-left: 15px;
+    color: white;
+    padding: 10px 12px;
+    font-size: 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    background: #38E31B;
+    cursor: pointer;
+    background: linear-gradient(180deg, rgba(56, 227, 27, 1) 0%, rgba(22, 80, 30, 1) 100%);
+}
+
+.showPercentage {
+    font-size: 50px;
+    font-weight: bold;
+    color: #22d94f;
+}
+
+.ShowTimeRound {
+    font-weight: bold;
+    color: #38E31B;
+    text-align: center;
+    font-size: 23px;
+    line-height: 1;
+}
+
+.ShowTimeRound div:nth-child(2) {
+    color: #fff;
+    font-size: 25px;
+}
+
+/* cây dữ liệu */
+
+.progressBar {
+    height: 10px;
+    width: 300px;
+    position: absolute;
+    left: 96px;
+    border-radius: 5px;
+    background-color: rgb(99 99 99 / 30%);
+    overflow: hidden;
+}
+
+.progressStatusRed {
+    background:
+        repeating-linear-gradient(45deg,
+            #ff3939,
+            #ff3939 10px,
+            #ffffff 10px,
+            #ffffff 20px);
+    animation:
+        smooth-progress-red 3s linear infinite,
+        roll-effect 1.5s linear infinite;
+}
+
+.progressStatusGreen {
+    background:
+        repeating-linear-gradient(45deg,
+            darkgreen,
+            darkgreen 10px,
+            #ffffff 10px,
+            #ffffff 20px);
+    animation:
+        smooth-progress-green 3s ease-in infinite,
+        roll-effect 1.5s linear infinite;
+}
+
+.progressStatusViolet {
+    background:
+        repeating-linear-gradient(45deg,
+            violet,
+            violet 10px,
+            #ffffff 10px,
+            #ffffff 20px);
+    animation:
+        smooth-progress-violet 3s ease-in infinite,
+        roll-effect 1.5s linear infinite;
+}
+
+.progressStatusCadetblue {
+    background:
+        repeating-linear-gradient(45deg,
+            cadetblue,
+            cadetblue 10px,
+            #ffffff 10px,
+            #ffffff 20px);
+    animation:
+        smooth-progress-cadetblue 3s ease-in infinite,
+        roll-effect 1.5s linear infinite;
+
+}
+
+
+.progressStatus {
+    position: relative;
+    height: 100%;
+    width: 0;
+    border-radius: 5px;
+    background-size: 200% 100%;
+}
+
+.progressStatus::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg,
+            rgba(0, 0, 0, 0.8) 0%,
+            rgba(0, 0, 0, 0.4) 50%,
+            transparent 100%);
+    pointer-events: none;
+}
+
+@keyframes roll-effect {
+    0% {
+        background-position: 0 0;
+    }
+
+    100% {
+        background-position: -28px 0;
+    }
+}
+
+/* Thanh đỏ: 25% → 100% → 0% → lặp */
+@keyframes smooth-progress-red {
+    0% {
+        width: 25%;
+    }
+
+    50% {
+        width: 100%;
+    }
+
+    80% {
+        width: 0%;
+    }
+
+    100% {
+        width: 25%;
+    }
+}
+
+/* Thanh xanh lá: 75% → 100% → 0% → lặp */
+@keyframes smooth-progress-green {
+    0% {
+        width: 75%;
+    }
+
+    40% {
+        width: 100%;
+    }
+
+    70% {
+        width: 0%;
+    }
+
+    100% {
+        width: 75%;
+    }
+}
+
+/* Thanh tím: 50% → 100% → 0% → lặp */
+@keyframes smooth-progress-violet {
+    0% {
+        width: 50%;
+    }
+
+    60% {
+        width: 100%;
+    }
+
+    90% {
+        width: 0%;
+    }
+
+    100% {
+        width: 50%;
+    }
+}
+
+/* Thanh cadetblue: 0% → 100% → 0% → lặp */
+@keyframes smooth-progress-cadetblue {
+    0% {
+        width: 0%;
+    }
+
+    30% {
+        width: 100%;
+    }
+
+    60% {
+        width: 0%;
+    }
+
+    100% {
+        width: 0%;
+    }
+}
+
+/* model hiển thị dữ liệu */
+
+.modelConfirm {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.808);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.dialogContent {
+    text-align: center;
+    background-color: rgba(24, 65, 26, 0.5);
+    box-shadow: rgb(34, 217, 79) 0px 0px 10px 0px inset, rgb(34, 217, 79) 0px 0px 10px 0px;
+    max-width: 800px;
+    max-height: 600px;
+    width: 100%;
+    z-index: 2;
+    border-width: 3px;
+    border-style: solid;
+    border-color: rgb(255, 255, 255);
+    border-image: initial;
+    border-radius: 50px;
+    padding: 60px 35px 75px;
+    font-weight: bold;
+}
+
+.dialogTitle {
+    color: #fff;
+    font-size: 50px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.dialogTime {
+    background: linear-gradient(180deg, rgba(175, 232, 76, 1) 0%, rgba(54, 219, 79, 1) 100%);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    font-size: 40px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+.dialogBullets {
+    color: #fff;
+    font-size: 24px;
+    margin-bottom: 25px;
+}
+
+.dialogCloseBtn {
+    background: #38E31B;
+    background: linear-gradient(180deg, rgba(175, 232, 76, 1) 0%, rgba(54, 219, 79, 1) 100%);
+    color: #fff;
+    font-weight: 700;
+    border: 1px solid rgb(255, 255, 255);
+    padding: 5px 50px;
+    border-radius: 30px;
+    font-size: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+@media screen and (max-width: 900px) {
+    .responsiveDesktop {
+        display: none !important;
+    }
+}
+
+@media screen and (min-width: 900px) {
+    .responsiveMobile {
+        display: none !important;
+    }
+}
+
+
+.detailMobileGameInner {
+    background-image: url('https://trumcasino6789.com/images/KA_2.png');
+    height: 500px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    display: block;
+    margin: 0 auto;
+    border-radius: 0 !important;
+    width: 80%;
+    max-width: 900px;
+    min-width: 300px;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.titleMb {
+    background-image: url('https://trumcasino6789.com/images/222.png');
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    display: grid;
+    height: 55px;
+    max-width: 100%;
+    /* width: 400px; */
+    margin: 50px auto;
+    place-content: center;
+    margin: 5% 20px 5px 20px;
+    color: #00FF84;
+    font-size: calc(0.75rem + 1vw);
+}
+
+.imgavtarMobile {
+    background-image: url('https://trumcasino6789.com/images/Vector-Smart-Object.png');
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 110px;
+    padding: 15px 15px;
+}
+
+.imgavtarMobile>img {
+    width: 90px;
+    height: 80px;
+    border-radius: 10px;
+}
+
+/* styles.module.css */
+.ratoteTimeMb {
+    position: relative;
+}
+
+.circularContainerMb {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.rotatingBackground {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    animation: spinMb 2s linear infinite;
+}
+
+.percentageText {
+    position: relative;
+    font-size: 22px;
+    font-weight: bold;
+    color: white;
+    z-index: 1;
+}
+
+@keyframes spinMb {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* === Mobile / tablet: Slot & legacy layout === */
+@media (max-width: 900px) {
+    .detailGameInner {
+        height: auto !important;
+        min-height: min(590px, 92vh);
+        padding: 24px 16px !important;
+        flex-direction: column;
+    }
+
+    .avtartTable {
+        width: 100% !important;
+        max-width: 280px;
+        margin: 0 auto;
+    }
+
+    .containerDetail {
+        padding: 12px 12px 20px;
+    }
+
+    .marqueeContainer {
+        width: 100% !important;
+        max-width: 100%;
+        height: auto;
+        min-height: 56px;
+    }
+
+    .marqueeContent {
+        font-size: clamp(1rem, 4vw, 2rem);
+    }
+
+    .timeTable {
+        width: 100% !important;
+        max-width: 100%;
+        height: auto;
+        min-height: 40px;
+        margin-top: 24px;
+    }
+
+    .fontCountdown:not(.fontStatusCountdown) {
+        left: 50% !important;
+        margin-left: 0 !important;
+        transform: translate(-50%, -50%) !important;
+        font-size: clamp(1.75rem, 10vw, 3.75rem) !important;
+    }
+
+    .progressBar {
+        width: min(300px, 85vw) !important;
+        left: 50% !important;
+        transform: translateX(-50%);
+    }
+
+    .dialogContent {
+        max-width: calc(100vw - 32px) !important;
+        padding: 32px 20px 40px !important;
+        border-radius: 24px !important;
+    }
+
+    .dialogTitle {
+        font-size: clamp(1.5rem, 6vw, 2.5rem);
+    }
+
+    .dialogTime {
+        font-size: clamp(1.25rem, 5vw, 2rem);
+    }
+
+    .dialogBullets {
+        font-size: clamp(1rem, 3.5vw, 1.25rem);
+    }
+}
+
+@media (max-width: 480px) {
+    .loadTime {
+        margin-top: 0;
+        margin-bottom: 12px;
+        font-size: 16px;
+    }
+
+    .showPercentage {
+        font-size: clamp(1.75rem, 12vw, 3rem);
+    }
+}

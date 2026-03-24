@@ -1,0 +1,166 @@
+/* Popup THÔNG BÁO — bg-modal full panel, header [alert][title][alert], body + nút */
+
+.hall-notice-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  box-sizing: border-box;
+}
+
+.hall-notice-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: rgba(0, 8, 10, 0.82);
+  backdrop-filter: blur(4px);
+  cursor: pointer;
+}
+
+/* Khung ngoài: bg-modal trải full — flex để cả khối nội dung nằm giữa khung, không dồn sát mép trên */
+.hall-notice-modal__panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 500px;
+  min-height: 320px;
+  padding: 0;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
+  background-color: #040d0c;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 100% 100%;
+  animation: hall-notice-in 0.28s ease-out;
+}
+
+/* Toàn bộ chữ + chuông + nút: căn giữa theo chiều dọc trong khung modal */
+.hall-notice-modal__inner {
+  position: relative;
+  z-index: 1;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 0;
+  padding: clamp(22px, 8%, 40px) clamp(18px, 6%, 32px) clamp(22px, 8%, 40px);
+  gap: clamp(14px, 3vw, 20px);
+}
+
+@keyframes hall-notice-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Hàng tiêu đề: [chuông] THÔNG BÁO [chuông] — dùng div, không dùng <header> (tránh main.login.css header{position:fixed;top:0}) */
+.hall-notice-modal__head {
+  position: relative;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 3vw, 18px);
+  width: 100%;
+  margin: 0;
+}
+
+.hall-notice-modal__bell {
+  width: clamp(36px, 8vw, 52px);
+  height: clamp(36px, 8vw, 52px);
+  object-fit: contain;
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 10px rgba(255, 220, 80, 0.55));
+}
+
+.hall-notice-modal__title {
+  margin: 0;
+  font-family: "Roboto", system-ui, sans-serif;
+  font-size: clamp(1.2rem, 3.8vw, 1.55rem);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: #ffe066;
+  text-transform: uppercase;
+  text-shadow:
+    0 0 12px rgba(255, 224, 102, 0.55),
+    0 0 24px rgba(255, 180, 0, 0.25);
+  text-align: center;
+  line-height: 1.15;
+}
+
+/* Nội dung: chỉ chữ, căn giữa trong modal */
+.hall-notice-modal__body {
+  margin: 0;
+  width: 100%;
+  max-width: 34em;
+  text-align: center;
+  font-size: clamp(0.95rem, 2.6vw, 1.08rem);
+  line-height: 1.6;
+  color: #f5faf9;
+  font-weight: 500;
+}
+
+.hall-notice-modal__body strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+.hall-notice-modal__btn {
+  display: block;
+  width: 100%;
+  max-width: 280px;
+  margin: 4px auto 0;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: "Roboto", system-ui, sans-serif;
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #fff;
+  background: linear-gradient(
+    90deg,
+    #00c4b4 0%,
+    #00e8c8 40%,
+    #3dff9a 100%
+  );
+  box-shadow:
+    0 0 18px rgba(0, 255, 200, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition:
+    filter 0.2s ease,
+    transform 0.15s ease;
+}
+
+.hall-notice-modal__btn:hover {
+  filter: brightness(1.08);
+}
+
+.hall-notice-modal__btn:active {
+  transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hall-notice-modal__panel {
+    animation: none;
+  }
+}

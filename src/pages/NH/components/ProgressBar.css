@@ -1,0 +1,333 @@
+/* ProgressBar.css - clean baseline with mobile overrides */
+.progress-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.items-start { color: #24292e; }
+
+.progress-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+/* New card layout for Slot items */
+.progress-card {
+    cursor: pointer;
+    user-select: none;
+    width: 100%;
+}
+
+.progress-card:hover {
+    transform: translateY(-2px) scale(1.02);
+    filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.45));
+}
+
+.progress-frame {
+    position: relative;
+    width: 100%;
+    height: 154px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.progress-game-image {
+    position: absolute;
+    top: 16px;
+    left: 18px;
+    width: 69px;
+    height: 69px;
+    object-fit: cover;
+    border-radius: 10px;
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.55));
+}
+
+.progress-frame .progress-title {
+    position: absolute;
+    top: 25%;
+    transform: translateY(-25%);
+    left: 100px;
+    right: 16px;
+    margin: 0;
+    font-family: "Roboto", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-weight: 900;
+    font-size: 14px; /* ~13.66px */
+    line-height: 1;
+    letter-spacing: 0;
+    text-align: center;
+    display: -webkit-box;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+/* % circle ở góc phải dưới như hình mẫu */
+.progress-percent-circle {
+    position: absolute;
+    right: 32px;
+    bottom: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    /* Bỏ hoàn toàn nền và viền, chỉ giữ text */
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.progress-percent-circle--pulse {
+    animation: pulseText 0.9s infinite cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+.progress-percent-text {
+    font-family: "Roboto", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-weight: 900;
+    font-size: 14px;
+    line-height: 1;
+    letter-spacing: 0;
+    color: #ffffff;
+    text-shadow:
+        0 0 4px rgba(0, 0, 0, 0.8),
+        0 0 10px rgba(255, 255, 255, 0.8);
+}
+
+.progress-loading {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    pointer-events: none;
+    filter: drop-shadow(0 10px 18px rgba(0, 0, 0, 0.45));
+    transform: scaleX(-1);
+}
+
+.progress-percentage { font-size: 35px; font-weight: 700; margin-bottom: 12px; color: #fff; }
+
+.progress-bar-wrapper {
+    width: 100%;
+    height: 16px;
+    background-color: #34495e;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 0.1s ease-out;
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, rgba(255,255,255,0.1), rgba(255,255,255,0.3), rgba(255,255,255,0.1));
+    animation: progressAnimation 2s infinite;
+}
+
+.progress-fill.over-50 { background: linear-gradient(90deg, #2ecc71, #27ae60); }
+.progress-fill.under-50 { background: linear-gradient(90deg, #e74c3c, #c0392b); }
+
+@keyframes progressAnimation { from { transform: translateX(-100%);} to { transform: translateX(100%);} }
+@keyframes shine { from { transform: translateX(-100%);} to { transform: translateX(100%);} }
+.animate-shine { animation: shine 2s infinite; }
+
+/* Animation nhấp nháy số % */
+@keyframes pulseText {
+    0%,100% { color: #ff0000; text-shadow: 0 0 5px #fbbf24, 0 0 10px rgba(255,183,2,0.8), 0 0 20px rgba(255,183,2,0.6);} 
+    25%,75% { color: #ff3333; text-shadow: 0 0 15px #fbbf24, 0 0 30px rgba(255,183,2,0.9), 0 0 45px rgba(255,255,255,0.7); }
+    50% { color: #ff0000; text-shadow: 0 0 25px #fbbf24, 0 0 50px rgba(255,183,2,1), 0 0 75px rgba(255,255,255,0.9); }
+}
+.animate-pulse-text { animation: pulseText 0.8s infinite cubic-bezier(0.4,0,0.6,1); }
+
+@keyframes pulseGlow { 0%,100% { box-shadow: 0 0 5px rgba(239,68,68,0.5);} 50% { box-shadow: 0 0 15px rgba(239,68,68,0.8);} }
+.animate-pulse-glow { animation: pulseGlow 1s infinite; }
+
+/* Animation rung lắc cho số xu khi dưới 10 */
+@keyframes shakeCoins {
+    0%, 100% { transform: translateX(0); }
+    10% { transform: translateX(-1px); }
+    20% { transform: translateX(1px); }
+    30% { transform: translateX(-1px); }
+    40% { transform: translateX(1px); }
+    50% { transform: translateX(-1px); }
+    60% { transform: translateX(1px); }
+    70% { transform: translateX(-1px); }
+    80% { transform: translateX(1px); }
+    90% { transform: translateX(-1px); }
+}
+.animate-shake-coins { animation: shakeCoins 0.5s infinite; }
+
+@keyframes imageWobble {
+    0% { transform: scale3d(1,1,1) rotate(0deg); filter: drop-shadow(0 0 15px rgba(0,53,13,0.8)); }
+    15% { transform: scale3d(1.08,1.08,1.08) rotate(6deg); filter: drop-shadow(0 0 20px rgba(0,174,239,0.6)); }
+    30% { transform: scale3d(1.12,1.12,1.12) rotate(-6deg); filter: drop-shadow(0 0 25px rgba(0,174,239,0.8)); }
+    45% { transform: scale3d(1.12,1.12,1.12) rotate(6deg); }
+    60% { transform: scale3d(1.12,1.12,1.12) rotate(-6deg); }
+    75% { transform: scale3d(1.12,1.12,1.12) rotate(6deg); }
+    85% { transform: scale3d(1.05,1.05,1.05) rotate(0deg); filter: drop-shadow(0 0 20px rgba(0,53,13,0.9)); }
+    100% { transform: scale3d(1,1,1) rotate(0deg); filter: drop-shadow(0 0 15px rgba(0,53,13,0.8)); }
+}
+
+/* NOTE: legacy styles removed (button / old image layout). */
+
+/* reduce gap between items when used in grid */
+.progress-item-grid-gap { gap: 8px !important; }
+
+/* helper to ensure equal heights for cards when in a grid */
+.progress-equal-height { display: flex; flex-direction: column; justify-content: flex-start; height: 100%; }
+
+/* Mobile-only overrides: apply changes only for screens <= 430px to preserve desktop */
+
+/* PC layout is handled by fixed card sizes above. */
+
+@media (max-width: 430px) {
+    .progress-card {
+        max-width: 100%;
+    }
+
+    .progress-percent-circle {
+        right: 26px;
+        bottom: 38px;
+    }
+
+    .progress-loading {
+        left: 3%;
+        bottom: -14px;
+        transform: scale(-1.4);
+    }
+}
+
+@media (max-width: 390px) {
+    .progress-container {
+        padding: 0;
+    }
+}
+
+/* ---- NH "basic" card (238x332) ---- */
+.nh-basic-card {
+    width: 238px;
+    height: 332px;
+    background: transparent;
+    border: 1px solid #00FFE1;
+    border-radius: 12px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 12px 14px;
+    background: #00281AD9;
+}
+
+.nh-basic-game-image {
+    width: 170px;
+    height: 170px;
+    border: 2px solid #00FFE1;
+    border-radius: 16px;
+    object-fit: cover;
+    margin-top: 6px;
+    position: relative;
+    z-index: 1;
+}
+
+.nh-basic-game-title {
+    width: 100%;
+    text-align: center;
+    margin-top: 6px;
+    padding: 0 4px;
+    color: #FFD84D;
+    font-weight: 900;
+    font-size: 13px;
+    line-height: 1.2;
+    text-shadow: 0 0 10px rgba(255, 216, 77, 0.35);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    position: relative;
+    z-index: 2;
+}
+
+.nh-basic-bottom {
+    width: 100%;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 6px;
+}
+
+.nh-basic-play {
+    width: 82px;
+    height: 30px;
+    border-radius: 8px;
+    border: 1px solid #FFD84D;
+    background: rgba(255, 216, 77, 0.12);
+    color: #FFD84D;
+    font-weight: 900;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    margin: 0 auto;
+}
+
+.nh-basic-bar {
+    width: 100%;
+}
+
+.nh-basic-bar__label {
+    color: #FFD84D;
+    font-weight: 900;
+    font-size: 12px;
+    margin-bottom: 4px;
+    text-align: center;
+}
+
+.nh-basic-bar__track {
+    height: 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 216, 77, 0.55);
+    background: rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+}
+
+.nh-basic-bar__fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #FFD84D 0%, #FF9F1C 100%);
+    transition: width 0.35s ease-in-out;
+}
+
+.nh-basic-bar__fill--fixed {
+    transition: none;
+}
+
+@media (max-width: 520px) {
+    .nh-basic-card {
+        width: 100%;
+        max-width: 238px;
+        height: 332px;
+    }
+}

@@ -1,0 +1,269 @@
+/* Popup xác nhận vào bàn — hacker / cyber */
+
+.lobby-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  background: rgba(0, 12, 14, 0.72);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: lobby-confirm-fade 0.2s ease;
+}
+
+@keyframes lobby-confirm-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.lobby-confirm {
+  position: relative;
+  width: min(520px, 96vw);
+  max-width: 100%;
+  padding: 6px;
+  filter: drop-shadow(0 0 24px rgba(0, 255, 200, 0.35))
+    drop-shadow(0 0 2px rgba(0, 255, 180, 0.6));
+}
+
+/* Khung ngoài — glow xanh; không phủ nền đen lên ảnh */
+.lobby-confirm__panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 18px 22px 14px;
+  border-radius: 4px;
+  background: transparent;
+  min-height: 0;
+  border: 2px solid rgba(0, 255, 110, 0.75);
+  box-shadow:
+    0 0 0 1px rgba(0, 255, 200, 0.2),
+    0 0 20px rgba(0, 255, 110, 0.25);
+  clip-path: polygon(
+    14px 0,
+    calc(100% - 14px) 0,
+    100% 14px,
+    100% calc(100% - 14px),
+    calc(100% - 14px) 100%,
+    14px 100%,
+    0 calc(100% - 14px),
+    0 14px
+  );
+  overflow: hidden;
+}
+
+/* Nền bg-result — phủ kín toàn bộ popup (không chỉ nửa trên) */
+.lobby-confirm__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  pointer-events: none;
+}
+
+/* Lớp lưới phủ trên nền ảnh */
+.lobby-confirm__grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background-image:
+    linear-gradient(rgba(0, 255, 200, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 200, 0.04) 1px, transparent 1px);
+  background-size: 18px 18px;
+  opacity: 0.9;
+}
+
+.lobby-confirm__panel > *:not(.lobby-confirm__grid):not(.lobby-confirm__bg) {
+  position: relative;
+  z-index: 2;
+}
+
+/* Nút Close — ngoài / góc phải */
+.lobby-confirm__close {
+  position: absolute;
+  top: -4px;
+  right: 4px;
+  z-index: 10;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-size: 28px;
+  font-weight: 300;
+  line-height: 1;
+  cursor: pointer;
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+  transition: color 0.15s ease, transform 0.15s ease;
+}
+
+.lobby-confirm__close:hover {
+  color: #00ffe1;
+  transform: scale(1.08);
+}
+
+.lobby-confirm__header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 2px;
+  background: transparent;
+}
+
+.lobby-confirm__warn {
+  color: #ffeb3b;
+  filter: drop-shadow(0 0 6px rgba(255, 235, 59, 0.55));
+  flex-shrink: 0;
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+.lobby-confirm__title {
+  margin: 0;
+  padding: 0;
+  font-family: "Roboto", system-ui, sans-serif;
+  font-size: clamp(1rem, 3.2vw, 1.25rem);
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #ffeb3b;
+  background: transparent;
+  border: none;
+  text-shadow:
+    0 0 12px rgba(255, 235, 59, 0.45),
+    0 0 24px rgba(255, 200, 0, 0.25);
+}
+
+.lobby-confirm__question {
+  margin: 6px 0 4px;
+  text-align: center;
+  font-family: "Roboto", system-ui, sans-serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #f0f8f6;
+}
+
+/* Mã bàn kiểu C16 — monospace, gọn */
+.lobby-confirm__table-name {
+  margin: 0 0 10px;
+  text-align: center;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: clamp(1.15rem, 4vw, 1.45rem);
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #00ffe1;
+  text-shadow:
+    0 0 12px rgba(0, 255, 225, 0.45),
+    0 0 24px rgba(0, 200, 255, 0.2);
+}
+
+/* Hộp phí — viền chấm xanh */
+.lobby-confirm__box {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px dashed rgba(0, 255, 110, 0.65);
+  border-radius: 4px;
+  background: rgba(0, 8, 12, 0.45);
+  box-shadow: inset 0 0 20px rgba(0, 60, 50, 0.2);
+}
+
+.lobby-confirm__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0;
+  font-family: "Roboto", system-ui, sans-serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.lobby-confirm__row + .lobby-confirm__row {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(0, 255, 110, 0.15);
+}
+
+.lobby-confirm__label {
+  color: rgba(0, 255, 200, 0.9);
+}
+
+.lobby-confirm__value {
+  color: #00ff6e;
+  text-shadow: 0 0 8px rgba(0, 255, 110, 0.35);
+  white-space: nowrap;
+}
+
+/* Nút — gọn hơn */
+.lobby-confirm__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+  justify-content: center;
+}
+
+.lobby-confirm__btn {
+  flex: 0 1 auto;
+  min-width: 0;
+  max-width: 148px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  font-family: "Roboto", system-ui, sans-serif;
+  font-size: 0.82rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: filter 0.15s ease, transform 0.12s ease;
+}
+
+.lobby-confirm__btn:active {
+  transform: scale(0.98);
+}
+
+.lobby-confirm__btn--primary {
+  color: #0a1210;
+  background: linear-gradient(180deg, #5fffd4 0%, #00c8e8 55%, #0098c4 100%);
+  box-shadow:
+    0 0 16px rgba(0, 220, 255, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.lobby-confirm__btn--primary:hover {
+  filter: brightness(1.08);
+}
+
+.lobby-confirm__btn--danger {
+  color: #1a0a0c;
+  background: linear-gradient(180deg, #ff8a9e 0%, #ff5252 50%, #c62828 100%);
+  box-shadow:
+    0 0 14px rgba(255, 80, 100, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+.lobby-confirm__btn--danger:hover {
+  filter: brightness(1.06);
+}
+
+@media (max-width: 400px) {
+  .lobby-confirm__actions {
+    flex-direction: column;
+  }
+
+  .lobby-confirm__btn {
+    max-width: none;
+  }
+}

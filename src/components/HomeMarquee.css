@@ -1,0 +1,74 @@
+/* Marquee dưới header — dùng chung nhiều trang */
+
+.home-marquee {
+  width: 100%;
+  background: linear-gradient(
+    180deg,
+    rgba(8, 24, 28, 0.95) 0%,
+    rgba(6, 18, 22, 0.98) 100%
+  );
+  border-top: 1px solid rgba(0, 229, 255, 0.25);
+  border-bottom: 1px solid rgba(0, 229, 255, 0.2);
+  overflow: hidden;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+/* Trang casino: ít khoảng hơn home, vẫn tách nội dung */
+.home-marquee--tight {
+  margin-bottom: 12px;
+}
+
+.home-marquee__track {
+  display: flex;
+  width: max-content;
+  animation: home-marquee-scroll 45s linear infinite;
+  white-space: nowrap;
+}
+
+.home-marquee__track:hover {
+  animation-play-state: paused;
+}
+
+.home-marquee__text {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 48px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffe066;
+  text-shadow: 0 0 8px rgba(255, 224, 102, 0.35);
+}
+
+.home-marquee__horn {
+  flex-shrink: 0;
+}
+
+@keyframes home-marquee-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 640px) {
+  .home-marquee {
+    height: 36px;
+  }
+
+  .home-marquee__text {
+    font-size: 12px;
+    padding: 0 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-marquee__track {
+    animation: none;
+  }
+}

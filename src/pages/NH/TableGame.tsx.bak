@@ -1,0 +1,314 @@
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import Swal from "sweetalert2";
+
+import Header from "../../components/Header";
+import ModalConfirmLogout from "../../components/ModalConfirmLogout";
+import styles from './style.module.css';
+
+const TableGame = () => {
+  const [isShowLogout, setIsShowLogout] = useState(false);
+  const [showDialog, setShowDialog] = useState(false);
+  const [showButton, setShowButton] = useState(true);
+  const [showTimeInfo, setShowTimeInfo] = useState(false);
+  const [percent, setPercent] = useState(0);
+  const [typeTurn, setTypeTurn] = useState('Số vòng quay');
+  const [bullets, setBullets] = useState(0);
+  const { room } = useParams();
+  const [timeRange, setTimeRange] = useState('--:-- --:--');
+  const [nameGame, setnameGame] = useState('Tool dự đoán kết quả nổ hủ');
+  const [timeLeft, setTimeLeft] = useState({
+    minutes: 108744,
+    seconds: 59
+  });
+
+  useEffect(() => {
+    const fetchTableList = async () => {
+      try {
+        const token = Cookies.get("access_token");
+        const response = await axios.get(
+          `${process.env.REACT_APP_URL_API_CASINO}/NH/gameOne?id=${room}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          }
+        );
+        const userInfoString = localStorage.getItem("user_info");
+        const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
+        let _Bullets = userInfo.coins > 999 ? 999 : Math.floor((userInfo.coins * 0.2) + (response.data.name.length * 2) + (response.data.percent * 0.1));
+
+        setTimeRange(response.data.time);
+        setBullets(_Bullets);
+        setnameGame(response.data.name);
+        setPercent(response.data.percent);
+        setTypeTurn(response.data.typeTurn);
+      } catch (error) {
+        console.error('Error fetching table list:', error);
+      }
+    };
+
+    fetchTableList();
+    window.scrollTo(0, 0);
+  }, []);
+
+  // đếm ngược thời gian ảo
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(prevTime => {
+        let newMinutes = prevTime.minutes;
+        let newSeconds = prevTime.seconds - 1;
+
+        if (newSeconds < 0) {
+          newMinutes -= 1;
+          newSeconds = 59;
+        }
+
+        if (newMinutes < 0) {
+          clearInterval(timer);
+          return { minutes: 0, seconds: 0 };
+        }
+
+        return { minutes: newMinutes, seconds: newSeconds };
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const handleShowDialog = async () => {
+    const token = Cookies.get("access_token");
+    try {
+      const data = await axios.post(
+        `${process.env.REACT_APP_URL_API}/users/subtract-coins-for-action`,
+        { amount: 1, action: "PLAY_GAME" },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      
+      localStorage.setItem('user_info', JSON.stringify({
+        coins: data.data.coins,
+        role: data.data.role,
+        userName: data.data.username,
+      }));
+      setShowDialog(true);
+    } catch (err: any) {
+      if ( err.status === 400  ) {
+        console.log('s')
+        Swal.fire({
+          icon: "error",
+          title: "Lỗi tải dữ liệu",
+          text: "Số xu hiện tại không đủ để thực hiện hành động",
+          customClass: {
+            popup: "bg-custom-image text-white",
+          },
+        });
+      }
+    }
+  };
+
+  const handleCloseDialog = () => {
+    setShowDialog(false);
+    setShowButton(false);
+    setShowTimeInfo(true);
+  };
+
+  return (
+    <div>
+      <Header setIsShowLogout={() => setIsShowLogout(true)} />
+      <div className="container-fluid lobby-bg position-relative mx-auto mb-5 max-w-screen-xl">
+        <div className="container mx-auto">
+          <div className="flex flex-wrap my-7">
+            <div className="w-1/2 md:w-2/3">
+              <img
+                src="/assets/NH/SLOT_ROOM_ai.png"
+                alt="Slot"
+                className="!w-[50%] h-auto"
+              />
+            </div>
+            <div className="w-1/2 md:w-1/3 flex justify-center items-center">
+              <a href={`/NH/slot/${localStorage.getItem("NH_PAGE")}`} className="text-white no-underline">
+                <div className="box-goto-lobby">
+                  Quay lại
+                </div>
+              </a>
+            </div>
+          </div>
+          <div className="flex justify-center">
+            <div className="rounded-md overflow-hidden border-2 border-[#00e565] p-4 md:p-6 w-full max-w-screen-xl mx-auto" style={{ backgroundColor: "rgba(0, 68, 55, 0.75)" }}>
+            <div className={`${styles.detailGameInner} ${styles.responsiveDesktop}`}>
+              <div className={styles.avtartTable} style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}>
+                <img
+                  src="/assets/NH/TABLE/Item_2.gif"
+                  alt="nổ hủ hacker"
+                />
+              </div>
+              <div className={styles.containerDetail}>
+                <div className="flex">
+                  <img
+                    src={`${localStorage.getItem('title_img')}`}
+                    className={styles.imgTitleTable}
+                    alt="Ảnh game" />
+                  <div className={styles.marqueeContainer}>
+                    <div className={styles.marqueeContent}>{nameGame}</div>
+                  </div>
+                </div>
+
+                {/* thời gian đếm ngược */}
+                <div className={styles.timeTable} style={{ backgroundImage: "url('/assets/NH/TABLE/Item_4.png')" }}>
+                  <div className={`${styles.fontCountdown} ${styles.fontStatusCountdown}`}>ĐẾM NGƯỢC</div>
+                  <div className={`${styles.fontCountdown} ${styles.fontCountdown}`}>
+                    {timeLeft.minutes}:{timeLeft.seconds.toString().padStart(2, '0')}
+                  </div>
+                  <div className={styles.circularCountdown} style={{ backgroundImage: "url('/assets/NH/TABLE/Item_5.png')" }}></div>
+                </div>
+                {/* nhận khung giờ và phần trăm */}
+                <div className={`position-relative`}>
+                  <div className="flex justify-between items-center h-full px-4" style={{
+                    backgroundImage: "url('/assets/NH/TABLE/Item_6.png')",
+                    backgroundSize: '100% 100%',
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center',
+                    minHeight: '150px',
+                    width: '100%',
+                  }}>
+                    <div className={`w-1/2 flex justify-center text-center mx-auto`}>
+                      <div
+                        className={`${styles.btnShowTimeRound}`}
+                        style={{ display: showButton ? 'block' : 'none' }}
+                        onClick={handleShowDialog}
+                      >
+                        Nhận khung giờ chơi
+                      </div>
+                      <div
+                        className={`${styles.ShowTimeRound}`}
+                        style={{ display: showTimeInfo ? 'block' : 'none' }}
+                      >
+                        <div>{timeRange}</div>
+                        <div>Lưu lượng bắn: {bullets}</div>
+                      </div>
+                    </div>
+                    <div className={`${styles.showPercentage} w-1/2 flex justify-center items-center mx-auto`}>
+                      <div style={{ marginLeft: 40 }}>{percent}%</div>
+                    </div>
+                  </div>
+                </div>
+                {/* cây dữ liệu */}
+                <div className="position-relative" style={{
+                  backgroundImage: "url('/assets/NH/TABLE/Item_7.png')",
+                  backgroundSize: '100% 100%',
+                  backgroundRepeat: 'no-repeat',
+                  minHeight: '150px',
+                  width: '100%',
+                  position: 'relative'
+                }}>
+                  <div className={`${styles.progressBar}`} style={{ top: 50 }}>
+                    <div className={`${styles.progressStatus} ${styles.progressStatusRed}`}></div>
+                  </div>
+                  <div className={`${styles.progressBar}`} style={{ top: 70 }}>
+                    <div className={`${styles.progressStatus} ${styles.progressStatusGreen}`}></div>
+                  </div>
+                  <div className={`${styles.progressBar}`} style={{ top: 90 }}>
+                    <div className={`${styles.progressStatus} ${styles.progressStatusViolet}`}></div>
+                  </div>
+                  <div className={`${styles.progressBar}`} style={{ top: 110 }}>
+                    <div className={`${styles.progressStatus} ${styles.progressStatusCadetblue}`}></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className={`${styles.detailMobileGameInner} ${styles.responsiveMobile}`}>
+              <div className={`${styles.titleMb} p-5 font-bold`}>{nameGame}</div>
+
+              <div className="flex px-4 mt-1">
+                <div className="w-1/2 flex justify-center items-center">
+                  <div className={`${styles.imgavtarMobile} justify-center items-center mx-auto`}>
+                    <img
+                      src={`${localStorage.getItem('title_img')}`}
+                      alt="Ảnh game" />
+                  </div>
+                </div>
+                <div className={`w-1/2 flex justify-center items-center text-center ${styles.ratoteTimeMb}`}>
+                  <div className={`${styles.circularContainerMb}`}>
+                    <div
+                      className={styles.rotatingBackground}
+                      style={{
+                        backgroundImage: "url('/assets/NH/TABLE/avt_r_mb.png')",
+                      }}
+                    />
+                    <p className={styles.percentageText}>{percent}%</p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-center items-center px-4 h-[130px]">
+                <div
+                  className="text-center relative w-full max-w-[300px] h-full"
+                  style={{
+                    backgroundImage: "url('/assets/NH/TABLE/time_mb.png')",
+                    backgroundSize: 130,
+                    backgroundRepeat: 'no-repeat',
+                    backgroundPosition: 'center',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                  }}
+                >
+                  <span className="text-white font-bold text-xl drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]" style={{ fontSize: 24 }}>
+                    {timeLeft.minutes}:{timeLeft.seconds.toString().padStart(2, '0')}
+                  </span>
+                </div>
+              </div>
+              <div className={`w-1/2 flex justify-center text-center mx-auto mt-5`}>
+                <div
+                  className={`${styles.btnShowTimeRound}`}
+                  style={{ display: showButton ? 'block' : 'none' }}
+                  onClick={handleShowDialog}
+                >
+                  Nhận khung giờ chơi
+                </div>
+                <div
+                  className={`${styles.ShowTimeRound}`}
+                  style={{ display: showTimeInfo ? 'block' : 'none' }}
+                >
+                  <div>{timeRange}</div>
+                  <div>Lưu lượng bắn: {bullets}</div>
+                </div>
+              </div>
+            </div>
+            </div>
+          </div>
+          {showDialog && (
+            <div className={styles.modelConfirm}>
+              <div className={styles.dialogContent}>
+                <div className={styles.dialogTitle}>Khung giờ chơi</div>
+                <div className={`${styles.dialogTime}`}>{timeRange}</div>
+                <div className={styles.dialogBullets}>{typeTurn}: {bullets}</div>
+                <button
+                  className={styles.dialogCloseBtn}
+                  onClick={handleCloseDialog}
+                >
+                  Đóng
+                </button>
+              </div>
+            </div>
+          )}
+          <div style={{ height: 100 }}></div>
+        </div>
+      </div>
+      <ModalConfirmLogout
+        isShowLogout={isShowLogout}
+        setIsShowLogout={() => {
+          setIsShowLogout(false);
+        }}
+      />
+    </div>
+  );
+};
+
+export default TableGame;
