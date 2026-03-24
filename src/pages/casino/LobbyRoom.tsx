@@ -86,6 +86,25 @@ function getRoundStorageKey(item: any): string {
   return "";
 }
 
+const ROUND_PREDICTION_CACHE_PREFIX = "roomPredictCacheLocal:";
+const ROUND_PREDICTION_CACHE_MAX = 300;
+
+function buildRoundPredictionCacheKey(tableId?: string): string | null {
+  if (!tableId) return null;
+  return `${ROUND_PREDICTION_CACHE_PREFIX}${tableId}`;
+}
+
+function pruneRoundPredictionMap(map: Map<string, string>): Map<string, string> {
+  if (map.size <= ROUND_PREDICTION_CACHE_MAX) return map;
+  const next = new Map(map);
+  while (next.size > ROUND_PREDICTION_CACHE_MAX) {
+    const firstKey = next.keys().next().value as string | undefined;
+    if (!firstKey) break;
+    next.delete(firstKey);
+  }
+  return next;
+}
+
 /**
  * Cùng nguồn với ô "DỰ ĐOÁN: VÁN KẾ TIẾP" (ai slot → percentCurrent → root → isPlayer).
  */
@@ -105,17 +124,13 @@ function liveDuDoanFromTablePayload(
   return "—";
 }
 
-/** Dự đoán trùng kết quả → THẮNG (vd B vs B); không trùng → THUA; thiếu dự đoán → — */
+/** Kết quả HÒA thì đánh giá HÒA; còn lại so dự đoán với kết quả. */
 function evaluateDanhGia(
   duDoan: string,
   ketQua: "PLAYER" | "BANKER" | "HÒA"
-): "THẮNG" | "THUA" | "—" {
+): "THẮNG" | "THUA" | "HÒA" | "—" {
+  if (ketQua === "HÒA") return "HÒA";
   if (duDoan === "—") return "—";
-  if (ketQua === "HÒA") {
-    if (duDoan === "HÒA") return "THẮNG";
-    return "THUA";
-  }
-  if (duDoan === "HÒA") return "THUA";
   return duDoan === ketQua ? "THẮNG" : "THUA";
 }
 
@@ -126,8 +141,9 @@ function pillClassForSide(label: string): string {
   return "room-pill--empty";
 }
 
-function pillClassForDanhGia(l: "THẮNG" | "THUA" | "—"): string {
+function pillClassForDanhGia(l: "THẮNG" | "THUA" | "HÒA" | "—"): string {
   if (l === "—") return "room-pill--dg-none";
+  if (l === "HÒA") return "room-pill--dg-hoa";
   if (l === "THẮNG") return "room-pill--dg-win";
   return "room-pill--dg-lose";
 }
@@ -324,6 +340,7 @@ const LobbyRoom: React.FC = () => {
   const [shuffle, setShuffle] = useState<number | null>(null);
   const [selectedKey, setSelectedKey] = useState<number | null>(1);
   const [nowTick, setNowTick] = useState(() => Date.now());
+  const [maintenanceFeeLogs, setMaintenanceFeeLogs] = useState<number[]>([]);
 
   /** Dự đoán đã khóa theo từng ván (khi có ván mới trong totalRound) — không đổi theo poll sau */
   const [roundPredictionByKey, setRoundPredictionByKey] = useState<
@@ -339,9 +356,45 @@ const LobbyRoom: React.FC = () => {
     snapshotPredictionRef.current = "—";
     lastValidPredictionRef.current = "—";
     prevRoundIdsRef.current = new Set();
-    setRoundPredictionByKey(new Map());
+    setMaintenanceFeeLogs([]);
+    const cacheKey = buildRoundPredictionCacheKey(id);
+    if (!cacheKey) {
+      setRoundPredictionByKey(new Map());
+      setSelectedKey(1);
+      return;
+    }
+    try {
+      const raw = localStorage.getItem(cacheKey);
+      if (!raw) {
+        setRoundPredictionByKey(new Map());
+      } else {
+        const parsed = JSON.parse(raw) as Record<string, string>;
+        const loaded = new Map<string, string>();
+        Object.entries(parsed).forEach(([k, v]) => {
+          if (!k) return;
+          if (v === "PLAYER" || v === "BANKER") {
+            loaded.set(k, v);
+          }
+        });
+        const pruned = pruneRoundPredictionMap(loaded);
+        setRoundPredictionByKey(pruned);
+      }
+    } catch {
+      setRoundPredictionByKey(new Map());
+    }
     setSelectedKey(1);
   }, [id]);
+
+  useEffect(() => {
+    const cacheKey = buildRoundPredictionCacheKey(id);
+    if (!cacheKey) return;
+    try {
+      const payload = Object.fromEntries(roundPredictionByKey.entries());
+      localStorage.setItem(cacheKey, JSON.stringify(payload));
+    } catch {
+      // ignore storage quota / private mode
+    }
+  }, [id, roundPredictionByKey]);
 
   const navigate = useNavigate();
 
@@ -362,7 +415,13 @@ const LobbyRoom: React.FC = () => {
             },
           }
         )
-        .then((data) => setCoin(data.data.coins))
+        .then((data) => {
+          setCoin(data.data.coins);
+          setMaintenanceFeeLogs((prev) => {
+            const next = [Date.now(), ...prev];
+            return next.slice(0, 30);
+          });
+        })
         .catch((err) => {
           const message = err?.response?.data?.message;
           if (
@@ -446,18 +505,8 @@ const LobbyRoom: React.FC = () => {
             (pc as any)?.Round ?? (pc as any)?.round ?? undefined
           );
           setDataRoom(payload);
-          // eslint-disable-next-line no-console
-          console.log("[LobbyRoom][FetchTablePayload]", {
-            tableId: id,
-            payloadKeys: Object.keys(payload ?? {}),
-            hasPercentCurrent: payload?.percentCurrent != null,
-            hasAi0: payload?.ai0 != null,
-            totalRoundLength: Array.isArray(payload?.totalRound)
-              ? payload.totalRound.length
-              : 0,
-          });
         })
-        .catch((err) => console.log(err));
+        .catch(() => undefined);
     };
 
     const timeout = setTimeout(fetchTable, 1000);
@@ -550,14 +599,15 @@ const LobbyRoom: React.FC = () => {
   );
 
   useEffect(() => {
-    if (duDoanLiveLabel !== "—") {
+    if (duDoanLiveLabel === "PLAYER" || duDoanLiveLabel === "BANKER") {
       lastValidPredictionRef.current = duDoanLiveLabel;
     }
   }, [duDoanLiveLabel]);
 
   /**
-   * Khi totalRound có thêm ván mới: gán dự đoán = snapshot từ lần poll trước
-   * (đúng với P/B đang hiển thị trước khi ván đó đóng / trước khi BE đẩy ván mới).
+   * Chỉ snapshot cho phiên MỚI xuất hiện.
+   * - Phiên cũ đã có trong danh sách trước đó: giữ nguyên giá trị đã lưu.
+   * - Không backfill ngược toàn bộ lịch sử bằng dự đoán hiện tại.
    */
   useEffect(() => {
     const raw = dataRoom?.totalRound;
@@ -572,65 +622,55 @@ const LobbyRoom: React.FC = () => {
         .filter(Boolean)
     );
 
-    // Tránh khóa giá trị "—" nếu poll đầu chưa kịp có round/percentCurrent.
     const currentLive =
-      duDoanLiveLabel !== "—" ? duDoanLiveLabel : lastValidPredictionRef.current;
+      duDoanLiveLabel === "PLAYER" || duDoanLiveLabel === "BANKER"
+        ? duDoanLiveLabel
+        : lastValidPredictionRef.current;
     const frozenCandidate =
-      snapshotPredictionRef.current !== "—"
+      snapshotPredictionRef.current === "PLAYER" ||
+      snapshotPredictionRef.current === "BANKER"
         ? snapshotPredictionRef.current
         : lastValidPredictionRef.current;
+    const newRoundKeys = sorted
+      .map((item: any) => getRoundStorageKey(item))
+      .filter((k: string) => Boolean(k) && !prevRoundIdsRef.current.has(k));
 
     setRoundPredictionByKey((prev) => {
       const next = new Map(prev);
-
-      // Lần đầu có dữ liệu chỉ tạo baseline key, KHÔNG gán ngược lịch sử bằng live hiện tại.
-      if (prevRoundIdsRef.current.size === 0) {
-        return next;
+      const fillValue =
+        frozenCandidate === "PLAYER" || frozenCandidate === "BANKER"
+          ? frozenCandidate
+          : currentLive;
+      if (fillValue !== "PLAYER" && fillValue !== "BANKER") {
+        return pruneRoundPredictionMap(next);
       }
 
-      // Chỉ gán snapshot cho các phiên MỚI xuất hiện sau mốc baseline.
-      if (frozenCandidate !== "—") {
-        for (const item of sorted) {
-          const k = getRoundStorageKey(item);
-          if (!k) continue;
-          if (!prevRoundIdsRef.current.has(k) && !next.has(k)) {
-            next.set(k, frozenCandidate);
-          }
+      // Safety seed: luôn gán cho phiên mới nhất nếu phiên đó chưa có dự đoán.
+      const latestRound = sorted[sorted.length - 1];
+      const latestKey = latestRound ? getRoundStorageKey(latestRound) : "";
+      if (latestKey && !next.has(latestKey)) {
+        next.set(latestKey, fillValue);
+      }
+
+      // Lần đầu nhận totalRound: chỉ tạo baseline, không gán ngược lịch sử.
+      if (prevRoundIdsRef.current.size === 0) {
+        return pruneRoundPredictionMap(next);
+      }
+
+      for (const item of sorted) {
+        const k = getRoundStorageKey(item);
+        if (!k) continue;
+        // Chỉ gán cho phiên mới (chưa xuất hiện ở poll trước).
+        if (!prevRoundIdsRef.current.has(k) && !next.has(k)) {
+          next.set(k, fillValue);
         }
       }
-      return next;
+      return pruneRoundPredictionMap(next);
     });
 
     snapshotPredictionRef.current = currentLive;
     prevRoundIdsRef.current = currentKeys;
   }, [dataRoom?.totalRound, duDoanLiveLabel]);
-
-  useEffect(() => {
-    const raw = dataRoom?.totalRound;
-    if (!Array.isArray(raw)) return;
-    // eslint-disable-next-line no-console
-    console.log("[LobbyRoom][DuDoanSnapshotDebug]", {
-      tableId: id,
-      selectedKey,
-      totalRoundLength: raw.length,
-      duDoanLiveLabel,
-      snapshotPrediction: snapshotPredictionRef.current,
-      lastValidPrediction: lastValidPredictionRef.current,
-      storedPredictionCount: roundPredictionByKey.size,
-      unresolvedCount: Array.from(roundPredictionByKey.values()).filter(
-        (v) => v === "—"
-      ).length,
-      missingKeyCount: raw.filter(
-        (r: any) => !roundPredictionByKey.has(getRoundStorageKey(r))
-      ).length,
-      latestRounds: raw.slice(-3).map((r: any) => ({
-        id: r?.id,
-        stampTime: r?.stampTime,
-        key: getRoundStorageKey(r),
-        storedPrediction: roundPredictionByKey.get(getRoundStorageKey(r)),
-      })),
-    });
-  }, [id, selectedKey, dataRoom?.totalRound, duDoanLiveLabel, roundPredictionByKey]);
 
   const tableTitle = dataRoom?.tableName ?? id ?? "--";
 
@@ -641,13 +681,23 @@ const LobbyRoom: React.FC = () => {
     const rounds = Array.isArray(dataRoom?.totalRound)
       ? [...dataRoom.totalRound].slice(-12).reverse()
       : [];
-    return rounds.map((item: any) => ({
+    const roundLogs = rounds.map((item: any) => ({
+      stampTime: item?.stampTime as number | undefined,
       time: formatLogTime(item?.stampTime),
       message: `AI đồng bộ dữ liệu vòng ${item?.id ?? "--"}: ${roadToLabel(
         item?.road
       )}`,
     }));
-  }, [dataRoom?.totalRound]);
+    const feeLogs = maintenanceFeeLogs.map((ts) => ({
+      stampTime: ts,
+      time: formatLogTime(ts),
+      message: "Phí duy trì - 5xu",
+    }));
+    return [...feeLogs, ...roundLogs]
+      .sort((a, b) => (b.stampTime ?? 0) - (a.stampTime ?? 0))
+      .slice(0, 24)
+      .map(({ time, message }) => ({ time, message }));
+  }, [dataRoom?.totalRound, maintenanceFeeLogs]);
 
   const decodeItems = useMemo(() => {
     const rounds = Array.isArray(tableRound?.groupRoad?.table)
@@ -962,12 +1012,12 @@ const LobbyRoom: React.FC = () => {
                   </div>
                 </section>
 
-                <section className="room-panel">
+                <section className="room-panel room-panel--cau-nhat">
                   <h3 className="room-panel__title">BẢNG CẦU NHẬT</h3>
                   <ResultTable tableData={dataRoom?.totalRound} />
                 </section>
 
-                <section className="room-panel">
+                <section className="room-panel room-panel--cau-lon">
                   <h3 className="room-panel__title">BẢNG CẦU LỚN</h3>
                   <BigRoadBoard tableData={dataRoom?.totalRound} />
                 </section>

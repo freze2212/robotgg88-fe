@@ -209,10 +209,6 @@ const HomePage = () => {
 
   const handleFrameClick = (hall: HallItem) => {
     if (hall.id !== "gg88") {
-      if (hall.href === "/NH") {
-        navigate("/NH");
-        return;
-      }
       setHallNoticeBrand(hall.brand);
       return;
     }
