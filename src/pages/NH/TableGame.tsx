@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useWindowWidth } from "../../hooks/useWindowWidth";
 import ModalConfirmLogout from "../../components/ModalConfirmLogout";
 import Header from "../../components/Header";
@@ -9,6 +9,8 @@ import Swal from "sweetalert2";
 
 const TableGameNew = () => {
   const navigate = useNavigate();
+  const params = useParams();
+  const tableRoomParam = params?.room;
   const userInfo = useMemo(() => {
     try {
       return JSON.parse(localStorage.getItem("user_info") || "null");
@@ -65,7 +67,7 @@ const TableGameNew = () => {
   useEffect(() => {
     const titleFromStorage = localStorage.getItem("title_text");
     if (titleFromStorage) setGameTitle(titleFromStorage);
-  }, []);
+  }, [tableRoomParam]);
 
   useEffect(() => {
     Swal.fire({

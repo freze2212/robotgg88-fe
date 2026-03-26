@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import './ProgressBar.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,27 +14,19 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ percentage, title, imageUrl, 
 
   const handleClick = () => {
     localStorage.setItem("title_img", imageUrl);
-    localStorage.setItem("title_text", title); // dùng cho TableGameNew (FE)
-    localStorage.setItem("win_percent", percentage.toString()); // dùng cho TableGameNew (FE)
+    localStorage.setItem("title_text", title);
+    localStorage.setItem("win_percent", percentage.toString());
     navigate(`/NH/table/${id}`);
   };
 
   const fixedPercent = Math.max(0, Math.min(100, Math.round(percentage)));
 
   return (
-    <div
-      onClick={handleClick}
-      className="nh-basic-card"
-      role="button"
-      tabIndex={0}
-    >
-      <img
-        className="nh-basic-game-image"
-        src={imageUrl}
-        alt={title}
-        loading="lazy"
-      />
-      <div className="nh-basic-game-title">{title}</div>
+    <div onClick={handleClick} className="nh-basic-card" role="button" tabIndex={0}>
+      <img className="nh-basic-game-image" src={imageUrl} alt={title} loading="lazy" />
+      <div className="nh-basic-game-title" title={title}>
+        {title}
+      </div>
       <div className="nh-basic-bottom">
         <button
           type="button"
