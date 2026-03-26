@@ -9,6 +9,7 @@ import ModalConfirmLogout from "../../components/ModalConfirmLogout";
 import styles from './style.module.css';
 import { getFormattedTime } from "../../utilities/axios.utilities";
 import ProgressBar from '../NH/components/ProgressBar';
+import { mockApi } from "../../services/mockApi";
 
 interface TableItem {
   time: string;
@@ -19,6 +20,223 @@ interface TableItem {
   _id: string;
 }
 
+// FE mockApi items (PG): order + showIcon are the source of truth for FE.
+const PG_FE_MOCK_ITEMS = [
+  { name: "Cuộc Đối Đầu Tiền Thưởng Hoang Dã", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0113.png" },
+  { name: "Đường Mạt Chược 2", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0055.png" },
+  { name: "Đường Mạt Chược 1", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0046.png" },
+  { name: "Kho Báu AZTEC", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0066.png" },
+  { name: "Neko may mắn", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0073.png" },
+  { name: "Thỏ May Mắn", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0120.png" },
+  { name: "Kỳ Lân Mách Nước", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0084.png" },
+  { name: "Ban nhạc hoang dã", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0083.png" },
+  { name: "Đêm tiệc cocktail", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0098.png" },
+  { name: "Chiến Thắng Thần Tài", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0052.png" },
+  { name: "thần may mắn ganesha", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0057.png" },
+  { name: "Rồng May Mắn", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0140.png" },
+  { name: "pháo hoa hoang dã", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0063.png" },
+  { name: "Nữ hoàng tiền thưởng", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0071.png" },
+  { name: "Truyền thuyết về Perseus", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0111.png" },
+  { name: "Khỉ Hoang Dã#3258", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0143.png" },
+  { name: "khủng hoảng zombie", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0148.png" },
+  { name: "Asgardian trỗi dậy", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0118.png" },
+  { name: "Sự Báo Thù Của Geisha", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/VI/PG0158.png" },
+  { name: "Anubis", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0146.png" },
+  { name: "Cơn cuồng tiền mặt", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0142.png" },
+  { name: "Danh dự Yakuza", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/VI/PG0151.png" },
+  { name: "Tiền thưởng cá mập", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0150.png" },
+  { name: "Truyền thuyết Người sói", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0138.png" },
+  { name: "yêu tinh giàu có", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0041.png" },
+  { name: "Cơn sốt bữa tiệc cuồng nhiệt", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0121.png" },
+  { name: "Giấc mơ Ma Cao", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0060.png" },
+  { name: "Kho Báu Của Thuyền Trưởng", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0039.png" },
+  { name: "Nhà Vô Địch Tốc Độ", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0110.png" },
+  { name: "Chim cánh cụt", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0037.png" },
+  { name: "Đôi cánh của Iguazu", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0152.png" },
+  { name: "Tài sản của Midas", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0119.png" },
+  { name: "Pinata Wins", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0144.png" },
+  { name: "Tiền Thưởng Grimms: Hansel & Gretel", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0170.png" },
+  { name: "Thợ Mỏ Ngân Hà", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0169.png" },
+  { name: "Cuộc Truy Tìm Kho Báu Rồng", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0168.png" },
+  { name: "Cơn Sốt Quán Ăn Vòng Quay", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0167.png" },
+  { name: "Jack Thợ Săn Người Khổng Lồ", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0166.png" },
+  { name: "Kho báu của người chết", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0165.png" },
+  { name: "Cú Đấm Giàu Sang", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/VI/PG0164.png" },
+  { name: "Cơn Cuồng Nộ Tận Thế", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/VI/PG0163.png" },
+  { name: "Cuộc Đua Graffiti", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/VI/PG0163.png" },
+  { name: "Vận May Của Ngài Kho Báu", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/VI/PG0161.png" },
+  { name: "Kỳ quan Inca", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/VI/PG0160.png" },
+  { name: "Rắn May Mắn", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/VI/PG0159.png" },
+  { name: "Sô-cô-la Cao Cấp", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/VI/PG0157.png" },
+  { name: "Lễ hội Rio", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/VI/PG0156.png" },
+  { name: "Kỳ Quan Viện Bảo Tàng", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0155.png" },
+  { name: "Niềm vui ẩm thực Oishi", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/VI/PG0154.png" },
+  { name: "Ba chú heo điên", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0153.png" },
+  { name: "Bóng đá nóng bỏng", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0149.png" },
+  { name: "Chicky Chạy", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0147.png" },
+  { name: "Phép thuật huyền bí", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0145.png" },
+  { name: "Đá quý vàng", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0141.png" },
+  { name: "Rồng Lửa 2", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0139.png" },
+  { name: "Báu vật của Tsar (Báu vật của Tsar)", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0137.png" },
+  { name: "Băng Nhóm Mafia", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0136.png" },
+  { name: "Lò Vàng (Lò Vàng)", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0135.png" },
+  { name: "Rút tiền trong vụ cướp hoang dã", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0134.png" },
+  { name: "Tiền đạo tối thượng", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/VI/PG0133.png" },
+  { name: "Cuồng nhiệt Hải Tặc Ninja", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0132.png" },
+  { name: "VinhquangcủaNgườiđấusĩ", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0131.png" },
+  { name: "Safari Hoang Dã", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0130.png" },
+  { name: "Du thuyền Hoàng gia", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0129.png" },
+  { name: "Kẹo Trái Cây", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0128.png" },
+  { name: "Cỏ Ba Lá May Mắn Giàu Có", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/VI/PG0127.png" },
+  { name: "Siêu Golf Drive", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0126.png" },
+  { name: "Linh hồn huyền bí", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0125.png" },
+  { name: "Lễ té nước Songkran", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0124.png" },
+  { name: "Tiệm bánh Bonanza", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0123.png" },
+  { name: "tiki hawaii", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0122.png" },
+  { name: "Bữa Tối Hân Hoan", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0117.png" },
+  { name: "Vàng giả kim", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0116.png" },
+  { name: "Kỳ quan vật tổ", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0115.png" },
+  { name: "Cây Tài Lộc Thịnh Vượng", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0114.png" },
+  { name: "Wild Coaster", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0112.png" },
+  { name: "Heo đất may mắn", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0109.png" },
+  { name: "Win Win Fish Prawn Crab", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0108.png" },
+  { name: "Battleground Royale", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0107.png" },
+  { name: "Bữa tiệc của Nữ hoàng", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0106.png" },
+  { name: "Rooster Rumble", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0105.png" },
+  { name: "Hoa bướm", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0104.png" },
+  { name: "Destiny of Sun & Moon", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0103.png" },
+  { name: "Đá quý Garuda", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0102.png" },
+  { name: "Hổ vận may", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0101.png" },
+  { name: "Sự thịnh vượng phương Đông", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0100.png" },
+  { name: "Lễ hội hóa trang", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0099.png" },
+  { name: "Biểu tượng cảm xúc phong phú", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0097.png" },
+  { name: "Kỳ quan vùng đất linh hồn", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0095.png" },
+  { name: "Vua khỉ huyền thoại", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0094.png" },
+  { name: "Buffalo Win", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0093.png" },
+  { name: "Siêu thị Spree", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0092.png" },
+  { name: "Raider Jane's Crypt of Fortune", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0091.png" },
+  { name: "Mermaid Riches", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0089.png" },
+  { name: "Vương quốc kỷ Jura", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0088.png" },
+  { name: "Sự trỗi dậy của Apollo", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0086.png" },
+  { name: "Heist of Stakes", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0085.png" },
+  { name: "Kẹo Bonanza", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0082.png" },
+  { name: "Kho báu hùng vĩ", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0081.png" },
+  { name: "Vàng tiền điện tử", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0080.png" },
+  { name: "Kỳ nghỉ Bali", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0079.png" },
+  { name: "Vận may tuổi Sửu", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0078.png" },
+  { name: "Vương triều Opera", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0077.png" },
+  { name: "Người bảo vệ băng và lửa", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0076.png" },
+  { name: "Đá quý thiên hà", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0075.png" },
+  { name: "Jack Sương Giá Mùa Đông", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0074.png" },
+  { name: "Trang sức của sự thịnh vượng", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0072.png" },
+  { name: "Sự quyến rũ của ma cà rồng", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0070.png" },
+  { name: "Bí Mật Của Cleopatra", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0069.png" },
+  { name: "Kỳ quan sông Thái", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0068.png" },
+  { name: "Circus Delight", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0067.png" },
+  { name: "Đèn Aladdin", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0065.png" },
+  { name: "Phượng Hoàng Nổi Dậy", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0059.png" },
+  { name: "Cuốn sách bí ẩn của Ai Cập", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0056.png" },
+  { name: "Thiên Đường Bikini", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0054.png" },
+  { name: "nổ kẹo", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0053.png" },
+  { name: "Vị Cứu Tinh - Hành Trình", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0051.png" },
+  { name: "Bóng Đá Thiếu Lâm", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0050.png" },
+  { name: "Guồng Quay Tình Yêu", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0049.png" },
+  { name: "chuột may mắn", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0048.png" },
+  { name: "Long Sinh", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0047.png" },
+  { name: "Rồng Hổ May Mắn", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0045.png" },
+  { name: "Nhà Vô Địch Muay Thái", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0044.png" },
+  { name: "Ninja đối đầu Samurai", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0043.png" },
+  { name: "Bá Hổ Thu Hương", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0042.png" },
+  { name: "Cuộc Phiêu Lưu Đến Kho Báu", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0038.png" },
+  { name: "Kho Báu Khổng Lồ", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0035.png" },
+  { name: "Khu Rừng Vui Nhộn", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0033.png" },
+  { name: "Ganesha Vàng", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0031.png" },
+  { name: "Ân Sủng Của Hoàng Đế", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0030.png" },
+  { name: "Biểu Tượng Ai Cập", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0029.png" },
+  { name: "Heo Vàng", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0028.png" },
+  { name: "Vị Cứu Tinh - Thanh Kiếm", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0027.png" },
+  { name: "Quà Của Ông Già Noel", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0025.png" },
+  { name: "Gấu Trúc Hip Hop", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0024.png" },
+  { name: "Sư Tử Vương Giả", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0023.png" },
+  { name: "Huyền thoại Hou Yi", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0021.png" },
+  { name: "Ông Hallow-Win!", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0020.png" },
+  { name: "Truyền Thuyết Rồng", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0019.png" },
+  { name: "Cô Bé Quàng Khăn Đỏ", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0017.png" },
+  { name: "Vị Cứu Tinh", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0014.png" },
+  { name: "Plushie Frenzy", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0012.png" },
+  { name: "Medusa 1: Lời nguyền của Athena", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0009.png" },
+  { name: "Cây Tài Lộc", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0007.png" },
+  { name: "Medusa 2: Sứ mệnh Perseus", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0005.png" },
+  { name: "Win Win Won", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0004.png" },
+  { name: "Thần May Mắn", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0003.png" },
+  { name: "Mỹ Nhân Kế Của Diao Chan", showIcon: "https://images.484930494.com/TCG_GAME_ICONS/PG/EN/PG0002.png" }
+] as const;
+
+const PG_NAME_ORDER = PG_FE_MOCK_ITEMS.map((x) => x.name);
+const PG_SHOWICON_BY_NAME = (() => {
+  const m = new Map<string, string>();
+  for (const it of PG_FE_MOCK_ITEMS) m.set(normalizeForOrder(it.name), it.showIcon);
+  return m;
+})();
+
+const BNG_NAME_ORDER = (mockApi.tableListData.BNG ?? []).map((x: any) => x.name);
+const BNG_SHOWICON_BY_NAME = (() => {
+  const m = new Map<string, string>();
+  for (const it of mockApi.tableListData.BNG ?? []) {
+    m.set(normalizeForOrder((it as any).name), (it as any).showIcon);
+  }
+  return m;
+})();
+
+function getMockPercent() {
+  // Same logic as FE mockApi.ts
+  const isHighPercent = Math.random() < 0.3; // 30% games có % trên 85
+  return isHighPercent
+    ? Math.floor(Math.random() * 10) + 86 // 86-95
+    : Math.floor(Math.random() * 85) + 1; // 1-85
+}
+
+function buildMockTableList(typeGameKey: string): TableItem[] {
+  const baseData = (mockApi.tableListData[typeGameKey] ?? []) as any[];
+  return baseData.map((it, idx) => ({
+    _id: `${typeGameKey}-${it?.id ?? idx}`,
+    name: it.name,
+    typeGame: typeGameKey,
+    time: "",
+    percent: getMockPercent(),
+    showIcon: it.showIcon
+  }));
+}
+
+function normalizeForOrder(str: string) {
+  // normalize similar to search: lowercase + remove Vietnamese accents/diacritics
+  const s = (str ?? "").toString().toLowerCase();
+  const from =
+    "àáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđ";
+  const to =
+    "aaaaaaaaaaaaaaaaaeeeeeeeeeeeiiiiiooooooooooooooooouuuuuuuuuuuyyyyyd";
+  let out = "";
+  for (let i = 0; i < s.length; i++) {
+    const idx = from.indexOf(s[i]);
+    out += idx >= 0 ? to[idx] : s[i];
+  }
+  return out.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+function sortByFeMockOrder(items: TableItem[], order: string[]) {
+  const rank = new Map<string, number>();
+  order.forEach((name, i) => rank.set(normalizeForOrder(name), i));
+  return [...items].sort((a, b) => {
+    const ra = rank.get(normalizeForOrder(a.name));
+    const rb = rank.get(normalizeForOrder(b.name));
+    if (ra !== undefined && rb !== undefined) return ra - rb;
+    if (ra !== undefined) return -1;
+    if (rb !== undefined) return 1;
+    // fallback: keep stable-ish alphabetical for unknown items
+    return a.name.localeCompare(b.name, "vi");
+  });
+}
+
 const Slot = () => {
   const [isShowLogout, setIsShowLogout] = useState(false);
   const [tableList, setTableList] = useState<TableItem[]>([]);
@@ -27,6 +245,7 @@ const Slot = () => {
     typeof window !== "undefined" ? window.innerWidth <= 430 : false
   );
   const { room } = useParams();
+  const roomKey = (room ?? "").toString().toUpperCase();
   const currentTime = getFormattedTime();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -141,20 +360,51 @@ const Slot = () => {
       try {
         const token = Cookies.get("access_token");
         const response = await axios.get(
-          `${process.env.REACT_APP_URL_API_CASINO}/NH/tableList?typeGame=${room}`,
+          `${process.env.REACT_APP_URL_API_CASINO}/NH/tableList?typeGame=${roomKey}`,
           {
             headers: {
               Authorization: `Bearer ${token}`
             }
           }
         );
-        setTableList(response.data);
-        if (response.data) {
-          setTimeout(() => {
-            setIsLoading(true);
-            Swal.close();
-          }, 2000);
+        if (process.env.NODE_ENV !== "production") {
+          const list = Array.isArray(response.data) ? response.data : [];
+          // eslint-disable-next-line no-console
+          console.groupCollapsed(
+            `[NH/Slot] tableList ${String(roomKey)}: ${list.length} items`
+          );
+          // eslint-disable-next-line no-console
+          console.log("firstItemKeys:", list[0] ? Object.keys(list[0]) : []);
+          // eslint-disable-next-line no-console
+          console.log(
+            "first10Names:",
+            list.slice(0, 10).map((x: any) => x?.name)
+          );
+          // eslint-disable-next-line no-console
+          console.log(
+            "first10ShowIcon:",
+            list.slice(0, 10).map((x: any) => x?.showIcon)
+          );
+          // eslint-disable-next-line no-console
+          console.log("roomParamRaw:", room);
+          // eslint-disable-next-line no-console
+          console.groupEnd();
         }
+        const rawList: TableItem[] = Array.isArray(response.data) ? response.data : [];
+        const effectiveList =
+          rawList.length === 0 && (roomKey === "PG" || roomKey === "BNG")
+            ? buildMockTableList(roomKey)
+            : rawList;
+
+        const nextList =
+          roomKey === "PG"
+            ? sortByFeMockOrder(effectiveList, PG_NAME_ORDER)
+            : roomKey === "BNG"
+              ? sortByFeMockOrder(effectiveList, BNG_NAME_ORDER)
+              : effectiveList;
+        setTableList(nextList);
+        setIsLoading(true);
+        Swal.close();
       } catch (error) {
         console.error('Error fetching table list:', error);
       }
@@ -164,7 +414,7 @@ const Slot = () => {
     window.scrollTo(0, 0);
   }, [room]);
 
-  localStorage.setItem("NH_PAGE", String(room));
+  localStorage.setItem("NH_PAGE", String(roomKey));
 
   return (
     <div>
@@ -380,11 +630,18 @@ const Slot = () => {
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-4">
               {visibleTableList.map((item, index) => {
+                // FE: đánh số icon theo đúng index đang render.
+                const iconNo = index + 1;
+                const feShowIcon =
+                  roomKey === "PG"
+                    ? PG_SHOWICON_BY_NAME.get(normalizeForOrder(item.name))
+                    : roomKey === "BNG"
+                      ? BNG_SHOWICON_BY_NAME.get(normalizeForOrder(item.name))
+                      : undefined;
                 const imageUrl =
                   item.showIcon ||
-                  `/assets/NH/${room}/${room}_${(index + 1)
-                    .toString()
-                    .padStart(2, "0")}.png`;
+                  feShowIcon ||
+                  `/assets/NH/${roomKey}/${roomKey}_${iconNo.toString().padStart(2, "0")}.png`;
                 return (
                   <div
                     key={item._id}
