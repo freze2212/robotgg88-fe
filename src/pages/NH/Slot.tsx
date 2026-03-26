@@ -245,7 +245,9 @@ const Slot = () => {
     typeof window !== "undefined" ? window.innerWidth <= 430 : false
   );
   const { room } = useParams();
-  const roomKey = (room ?? "").toString().toUpperCase();
+  const roomKeyRaw = (room ?? "").toString().toUpperCase();
+  // Alias: DG uses PG list/icons/order (same as FE expectation)
+  const roomKey = roomKeyRaw === "DG" ? "PG" : roomKeyRaw;
   const currentTime = getFormattedTime();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -358,6 +360,26 @@ const Slot = () => {
 
     const fetchTableList = async () => {
       try {
+        // For PG/BNG: use FE mockApi directly to guarantee name+icon+order identical to FE.
+        if (roomKey === "PG" || roomKey === "BNG") {
+          const mockRes = await mockApi.getTableList(roomKey);
+          const list = Array.isArray(mockRes.data) ? mockRes.data : [];
+
+          const normalized: TableItem[] = list.map((it: any, idx: number) => ({
+            _id: `${roomKey}-${it?.id ?? idx}`,
+            name: it?.name ?? "",
+            typeGame: roomKey,
+            time: it?.time ?? "",
+            percent: Number.isFinite(it?.percent) ? it.percent : 0,
+            showIcon: it?.showIcon
+          }));
+
+          setTableList(normalized);
+          setIsLoading(true);
+          Swal.close();
+          return;
+        }
+
         const token = Cookies.get("access_token");
         const response = await axios.get(
           `${process.env.REACT_APP_URL_API_CASINO}/NH/tableList?typeGame=${roomKey}`,
@@ -367,6 +389,7 @@ const Slot = () => {
             }
           }
         );
+
         if (process.env.NODE_ENV !== "production") {
           const list = Array.isArray(response.data) ? response.data : [];
           // eslint-disable-next-line no-console
@@ -391,18 +414,7 @@ const Slot = () => {
           console.groupEnd();
         }
         const rawList: TableItem[] = Array.isArray(response.data) ? response.data : [];
-        const effectiveList =
-          rawList.length === 0 && (roomKey === "PG" || roomKey === "BNG")
-            ? buildMockTableList(roomKey)
-            : rawList;
-
-        const nextList =
-          roomKey === "PG"
-            ? sortByFeMockOrder(effectiveList, PG_NAME_ORDER)
-            : roomKey === "BNG"
-              ? sortByFeMockOrder(effectiveList, BNG_NAME_ORDER)
-              : effectiveList;
-        setTableList(nextList);
+        setTableList(rawList);
         setIsLoading(true);
         Swal.close();
       } catch (error) {
