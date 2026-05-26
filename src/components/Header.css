@@ -1,0 +1,132 @@
+/* Ghi đè main.login.css: header { position: fixed } — header phải chiếm chỗ trong layout */
+header.app-header {
+  position: static;
+  top: auto;
+  left: auto;
+  width: 100%;
+  z-index: 100;
+  flex-shrink: 0;
+  background-color: #59480066;
+  box-sizing: border-box;
+}
+
+.app-header__inner {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 52px;
+  padding: 10px 20px;
+  box-sizing: border-box;
+}
+
+.app-header__greeting {
+  display: flex;
+  align-items: center;
+  padding: 8px 14px;
+  background-color: #ffd700;
+  color: #000;
+  font-family: "Roboto", Arial, sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1.2;
+  white-space: nowrap;
+  border-radius: 0;
+}
+
+.app-header__actions {
+  display: flex;
+  align-items: stretch;
+  flex-shrink: 0;
+}
+
+.app-header__token {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  background-color: rgba(0, 0, 0, 0.55);
+  border: 1px solid #ffd700;
+  color: #fff;
+  font-family: "Roboto", Arial, sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1.2;
+  white-space: nowrap;
+  border-radius: 0;
+}
+
+.app-header__logout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  margin: 0;
+  border: 1px solid #ffd700;
+  border-left: none;
+  background-color: #c41e1e;
+  color: #fff;
+  font-family: "Roboto", Arial, sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  border-radius: 0;
+  transition: filter 0.2s;
+}
+
+.app-header__logout:hover {
+  filter: brightness(1.1);
+}
+
+@media (max-width: 640px) {
+  .app-header__inner {
+    padding: max(8px, env(safe-area-inset-top, 0px)) 12px 8px;
+    gap: 8px;
+    min-height: 44px;
+    flex-wrap: wrap;
+  }
+
+  .app-header__greeting {
+    padding: 6px 10px;
+    font-size: 12px;
+    max-width: 42vw;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .app-header__token,
+  .app-header__logout {
+    padding: 6px 10px;
+    font-size: 11px;
+    min-height: 40px;
+  }
+}
+
+@media (max-width: 380px) {
+  .app-header__inner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .app-header__greeting {
+    max-width: 100%;
+    justify-content: center;
+  }
+
+  .app-header__actions {
+    width: 100%;
+  }
+
+  .app-header__token {
+    flex: 1;
+    border-left: 1px solid #ffd700;
+  }
+
+  .app-header__logout {
+    flex: 1;
+    border-left: 1px solid #ffd700;
+  }
+}

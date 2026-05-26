@@ -101,7 +101,7 @@ const HomeCasino = () => {
   };
 
   return (
-    <div>
+    <div className="page-with-header">
       <Header setIsShowLogout={() => setIsShowLogout(true)} />
       <div className="container-fluid lobby-bg position-relative  mx-auto  mb-5 max-w-screen-xl">
         <div className="container mx-auto">

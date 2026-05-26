@@ -1,7 +1,7 @@
 /* Trang /casino/lobby — HACK SEXY BACCARAT */
 
 .casino-lobby-page {
-  min-height: 100vh;
+  flex: 1 1 auto;
 }
 
 /* Nền cũ: khối container-fluid lobby-bg (như HomeCasino / lobby trước đổi UI) */

@@ -6,6 +6,11 @@ import Header from "../../components/Header";
 import axios from "axios";
 import Cookies from "js-cookie";
 import Swal from "sweetalert2";
+import TableGameResultLayout from "./TableGameResultLayout";
+import { getAssetUrl } from "../../utils/assetUrl";
+import "../../components/FramePopupPanel.css";
+
+const FRAME_POPUP_BG = getAssetUrl("/assets/frame-popup.png");
 
 const TableGameNew = () => {
   const navigate = useNavigate();
@@ -52,8 +57,7 @@ const TableGameNew = () => {
   const vipHackUiTimerRef = useRef<number | null>(null);
 
   const ww = useWindowWidth();
-  const isNarrow = ww <= 430;
-  const isMobileUi = ww <= 640;
+  const isNarrow = ww <= 480;
 
   useEffect(() => {
     const raw = localStorage.getItem("user_info");
@@ -71,12 +75,13 @@ const TableGameNew = () => {
 
   useEffect(() => {
     Swal.fire({
-      html: `<div style="padding: 18px; color:white; font-family: 'Courier New', monospace;">Đang tải dữ liệu...</div>`,
+      title: "Đang tải dữ liệu",
+      html: "<p class='swal-loading-subtext'>Vui lòng chờ trong giây lát</p><div class='swal-loading-dots'><span class='swal-dot swal-dot-cyan'></span><span class='swal-dot swal-dot-orange'></span></div>",
+      customClass: { popup: "swal-loading-modal" },
       showConfirmButton: false,
       allowOutsideClick: false,
       allowEscapeKey: false,
       timer: 1200,
-      background: "rgba(0,0,0,0.85)",
     });
   }, []);
 
@@ -214,6 +219,7 @@ const TableGameNew = () => {
         title: "Thiếu dữ liệu",
         text: "Vui lòng nhập điểm trước khi bấm BẮT ĐẦU PHÂN TÍCH.",
         confirmButtonText: "Đã hiểu",
+        customClass: { popup: "custom-swal" },
       });
       return;
     }
@@ -225,6 +231,7 @@ const TableGameNew = () => {
         title: "Điểm chưa hợp lệ",
         text: "Điểm phải lớn hơn 0.",
         confirmButtonText: "Đã hiểu",
+        customClass: { popup: "custom-swal" },
       });
       return;
     }
@@ -681,6 +688,7 @@ const TableGameNew = () => {
         title: "Dữ liệu chưa hợp lệ",
         text: "Giá trị phải lớn hơn hoặc bằng 1000.",
         confirmButtonText: "Đã hiểu",
+        customClass: { popup: "custom-swal" },
       });
       return;
     }
@@ -735,731 +743,53 @@ const TableGameNew = () => {
   }, [hackPopupMode, hackProgress]);
 
   return (
-    <div
-      className="container-fluid lobby-bg position-relative mx-auto mb-5 max-w-screen-xl"
-      style={{
-        position: "relative",
-        minHeight: "100vh",
-        paddingLeft: "max(0px, env(safe-area-inset-left, 0px))",
-        paddingRight: "max(0px, env(safe-area-inset-right, 0px))",
-      }}
-    >
-      {/* Video background */}
-      <video
-        autoPlay
-        loop
-        muted
-        playsInline
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          zIndex: -1,
-          backgroundSize: "contain",
-          backgroundRepeat: "repeat",
-          backgroundPosition: "top"
-        }}
-      >
-        <source
-          src={isNarrow ? "/assets/bg-mb.mp4" : "/assets/bg-pc.mp4"}
-          type="video/mp4"
-        />
-      </video>
-
+    <div className="page-with-header">
       <Header setIsShowLogout={() => setIsShowLogout(true)} />
-
-      {/* Khung chính duy nhất */}
-      <div
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          paddingBottom: "max(16px, env(safe-area-inset-bottom, 0px))",
-          marginTop: isMobileUi ? "4.25rem" : "5rem",
-          paddingLeft: "max(8px, env(safe-area-inset-left, 0px))",
-          paddingRight: "max(8px, env(safe-area-inset-right, 0px))",
-        }}
-      >
-        <div
-          style={{
-            position: "relative",
-            width: "100%",
-            maxWidth: "min(475px, calc(100vw - 16px))",
-            height: isMobileUi ? "auto" : 755,
-            minHeight: isMobileUi ? 520 : 755,
-            backgroundImage: "url('/assets/bg-result-nohu.png')",
-            backgroundSize: "100% 100%",
-            backgroundRepeat: "no-repeat",
-            backgroundPosition: "center",
-            padding: isNarrow ? "12px 14px 14px" : "14px 24px",
-            color: "#fff",
-            boxSizing: "border-box",
-          }}
-        >
-          {/* Nút quay lại nằm cạnh trái modal */}
-          <button
-            onClick={() => (window.history.length > 1 ? navigate(-1) : navigate("/NH"))}
-            aria-label="Quay lại"
-            style={{
-              position: "absolute",
-              left: isMobileUi ? 0 : -98,
-              top: isMobileUi ? -40 : -44,
-              transform: "none",
-              border: "none",
-              background: "transparent",
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              padding: 0,
-              color: "#fff",
-              fontWeight: 700,
-              fontSize: 18,
-              zIndex: 5,
-              cursor: "pointer",
-            }}
-          >
-            <img src="/assets/arrow-icon.png" alt="arrow" style={{ width: 28, height: 28 }} />
-            <span>Quay lại</span>
-          </button>
-
-          {/* Div 1: robot */}
-          <div style={{ width: "100%", display: "flex", justifyContent: "center", marginTop: 8 }}>
-            <img
-              src="/assets/robot-result.gif"
-              alt="robot"
-              style={{
-                width: "min(430px, 100%)",
-                height: "auto",
-                maxHeight: isNarrow ? 200 : 255,
-                objectFit: "contain",
-              }}
-            />
-          </div>
-
-          {/* Div 2: logo + tên căn giữa dưới ảnh | khối loading/% bên phải */}
-          <div
-            style={{
-              display: "flex",
-              flexDirection: isNarrow ? "column" : "row",
-              gap: isNarrow ? 10 : 12,
-              marginTop: -4,
-              alignItems: isNarrow ? "stretch" : "flex-start",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                flexShrink: 0,
-                width: isNarrow ? "100%" : "auto",
-              }}
-            >
-              <img
-                src={gameImg}
-                alt="game"
-                onError={(e) => ((e.currentTarget as HTMLImageElement).src = "/assets/nohu.gif")}
-                style={{
-                  width: isNarrow ? 120 : 132,
-                  height: isNarrow ? 120 : 132,
-                  minWidth: isNarrow ? undefined : 132,
-                  borderRadius: 12,
-                  objectFit: "cover",
-                  border: "2px solid #ff3b30",
-                }}
-              />
-              {isNarrow ? (
-                <div
-                  style={{
-                    fontFamily: "Roboto, sans-serif",
-                    fontSize: "clamp(1rem, 4.5vw, 1.45rem)",
-                    fontWeight: 900,
-                    lineHeight: 1.15,
-                    letterSpacing: "0%",
-                    marginTop: 8,
-                    textAlign: "center",
-                    maxWidth: "100%",
-                    width: "100%",
-                    textShadow: "0 0 10px rgba(0,0,0,0.7)",
-                    whiteSpace: "normal",
-                    wordBreak: "break-word",
-                  }}
-                  title={gameTitle}
-                >
-                  {gameTitle}
-                </div>
-              ) : null}
-            </div>
-            <div style={{ flex: 1, minWidth: 0, width: isNarrow ? "100%" : undefined }}>
-              {!isNarrow ? (
-                <div
-                  style={{
-                    fontFamily: "Roboto, sans-serif",
-                    fontSize: "28.17px",
-                    fontWeight: 900,
-                    lineHeight: "100%",
-                    letterSpacing: "0%",
-                    marginBottom: 6,
-                    textShadow: "0 0 10px rgba(0,0,0,0.7)",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }}
-                  title={gameTitle}
-                >
-                  {gameTitle}
-                </div>
-              ) : null}
-              <div
-                style={{
-                  position: "relative",
-                  borderRadius: 4,
-                  overflow: "hidden",
-                  height: isNarrow ? 78 : 86,
-                }}
-              >
-                {vipHackActive || vipHackUiVisible ? (
-                  <div
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      padding: "6px 10px",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "flex-start",
-                      alignItems: "stretch",
-                      gap: 4,
-                      background: "#002520",
-                      border: "1px solid #00FFE1",
-                      boxShadow: "0 0 18px rgba(0,255,225,0.10)",
-                      borderRadius: 10,
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontWeight: 900,
-                        color: "#fff",
-                        fontSize: isNarrow ? 13 : 16,
-                        letterSpacing: 0.2,
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        width: "100%",
-                      }}
-                    >
-                      <span>RNG:</span>
-                      <span style={{ color: "#00FF6F" }}>BẺ KHÓA</span>
-                    </div>
-                    <div
-                      style={{
-                        fontWeight: 900,
-                        color: "#fff",
-                        fontSize: isNarrow ? 13 : 16,
-                        letterSpacing: 0.2,
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        width: "100%",
-                      }}
-                    >
-                      <span>LATENCY:</span>
-                      <span style={{ color: "#00FF6F" }}>
-                        {`${Math.floor(12 + Math.random() * 9)}ms`}
-                      </span>
-                    </div>
-                    <div
-                      style={{
-                        fontWeight: 900,
-                        color: "#fff",
-                        fontSize: isNarrow ? 13 : 16,
-                        letterSpacing: 0.2,
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        width: "100%",
-                      }}
-                    >
-                      <span>TỶ LỆ:</span>
-                      <span style={{ color: "#FF1500" }}>BIẾN ĐỘNG CAO</span>
-                    </div>
-                    <button
-                      type="button"
-                      disabled
-                      style={{
-                        marginTop: 0,
-                        border: "1px solid #00FFE1",
-                        background: "#00691C",
-                        color: "#00FF6F",
-                        fontWeight: 900,
-                        fontSize: isNarrow ? 12 : 15,
-                        padding: "5px 12px",
-                        borderRadius: 10,
-                        boxShadow: "0 0 18px rgba(0,255,225,0.12)",
-                        cursor: "not-allowed",
-                        width: "100%",
-                      }}
-                    >
-                      PHÂN TÍCH HOÀN TẤT
-                    </button>
-                  </div>
-                ) : (
-                  <>
-                    <video
-                      src="/assets/loading.webm"
-                      autoPlay
-                      loop
-                      muted
-                      playsInline
-                      style={{
-                        position: "absolute",
-                        inset: 0,
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        transform: "rotate(180deg)",
-                      }}
-                    />
-                    <div
-                      style={{
-                        position: "absolute",
-                        right: isNarrow ? 48 : 36,
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        fontSize: isNarrow ? 20 : 24,
-                        fontWeight: 900,
-                        textShadow: "0 0 10px rgba(0,0,0,0.8)",
-                      }}
-                    >
-                      {winPercent}%
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* 4 ô button (2x2) - dùng nền bg-result, kích thước bằng nhau */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: isNarrow ? 8 : 12,
-              marginTop: 12,
-            }}
-          >
-            {/** Quay mồi */}
-            <div
-              style={{
-                height: 82,
-                backgroundImage: "url('/assets/bg-result-nohu.png')",
-                backgroundSize: "100% 100%",
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "center",
-                border: "2px solid rgba(0, 255, 225, 0.85)",
-                borderRadius: 14,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                boxShadow: "0 0 14px rgba(0, 255, 225, 0.08)",
-                textAlign: "center",
-              }}
-            >
-              <div style={{ fontSize: 16, fontWeight: 900, lineHeight: 1.2 }}>
-                Quay mồi
-              </div>
-              <div
-                style={{
-                  fontSize: 13,
-                  fontWeight: 700,
-                  lineHeight: 1.2,
-                  color: "#F7FF00",
-                }}
-              >
-                {manualValues.rounds} vòng - Mức min {manualValues.minBet}
-              </div>
-            </div>
-
-            {/** Quay Auto */}
-            <div
-              style={{
-                height: 82,
-                backgroundImage: "url('/assets/bg-result-nohu.png')",
-                backgroundSize: "100% 100%",
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "center",
-                border: "2px solid rgba(0, 255, 225, 0.85)",
-                borderRadius: 14,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                boxShadow: "0 0 14px rgba(0, 255, 225, 0.08)",
-                textAlign: "center",
-              }}
-            >
-              <div style={{ fontSize: 16, fontWeight: 900, lineHeight: 1.2 }}>
-                Quay Auto
-              </div>
-              <div
-                style={{
-                  fontSize: 13,
-                  fontWeight: 700,
-                  lineHeight: 1.2,
-                  color: "#F7FF00",
-                }}
-              >
-                {autoValues.rounds} vòng - Mức min {autoValues.minBet}
-              </div>
-            </div>
-
-            {/** KHUNG GIỜ */}
-            <div
-              style={{
-                height: 82,
-                backgroundImage: "url('/assets/bg-result-nohu.png')",
-                backgroundSize: "100% 100%",
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "center",
-                border: "2px solid rgba(0, 255, 225, 0.85)",
-                borderRadius: 14,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                textAlign: "center",
-                fontFamily: '"Source Code Pro", monospace',
-                boxShadow: "0 0 14px rgba(0, 255, 225, 0.08)",
-                padding: "0 8px",
-              }}
-            >
-              <div style={{ lineHeight: 1.15, wordBreak: "break-word" }}>
-                <div style={{ color: "#F7FF00", fontWeight: 800, fontSize: isNarrow ? 15 : 18 }}>
-                  KHUNG GIỜ
-                </div>
-                <div
-                  style={{
-                    color: "#FFFFFF",
-                    fontWeight: 700,
-                    fontSize: isNarrow ? 13 : 16,
-                    marginTop: 6,
-                  }}
-                >
-                  {timeSlotText}
-                </div>
-              </div>
-            </div>
-
-            {/** VIP FEATURE */}
-            <div
-              role="button"
-              tabIndex={0}
-              onClick={() => {
-                void handleVipFeatureClick();
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  e.preventDefault();
-                  void handleVipFeatureClick();
-                }
-              }}
-              style={{
-                height: 82,
-                backgroundImage: "url('/assets/bg-result-nohu.png')",
-                backgroundSize: "100% 100%",
-                backgroundRepeat: "no-repeat",
-                backgroundPosition: "center",
-                border: "2px solid rgba(0, 255, 225, 0.85)",
-                borderRadius: 14,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                position: "relative",
-                boxShadow: "0 0 14px rgba(0, 255, 225, 0.08)",
-                padding: "18px 8px 0",
-                textAlign: "center",
-              }}
-            >
-              <img
-                src="/assets/vip-icon.png"
-                alt="vip"
-                style={{
-                  position: "absolute",
-                  left: "50%",
-                  top: isNarrow ? -20 : -26,
-                  transform: "translateX(-50%)",
-                  width: isNarrow ? 40 : 52,
-                  height: isNarrow ? 40 : 52,
-                  objectFit: "contain",
-                  zIndex: 3,
-                  pointerEvents: "none",
-                }}
-              />
-              <div style={{ fontSize: 16, fontWeight: 900, color: "#00FFE1" }}>
-                VIP FEATURE
-              </div>
-              <button
-                type="button"
-                disabled={isVipHackPopupStarting || isVipFeatureCharging}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  void handleVipFeatureClick();
-                }}
-                style={{
-                  marginTop: 2,
-                  width: "80%",
-                  height: 26,
-                  borderRadius: 2,
-                  background: vipHackActive
-                    ? "linear-gradient(90deg, #620000 0%, #FF4400 100%)"
-                    : "linear-gradient(90deg, #003730 0%, #00B9A0 100%)",
-                  color: "#FFFFFF",
-                  fontWeight: 900,
-                  fontSize: 11,
-                  letterSpacing: 0.3,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  cursor: isVipHackPopupStarting || isVipFeatureCharging ? "not-allowed" : "pointer",
-                  border: vipHackActive ? "2px solid #FF4400" : "2px solid rgba(0,185,160,0.55)",
-                  opacity: isVipHackPopupStarting || isVipFeatureCharging ? 0.65 : vipHackActive ? 1 : 0.75,
-                  transition: "opacity 0.15s ease, background 0.15s ease",
-                }}
-              >
-                {"\u003E"} {vipHackActive ? "KÍCH HOẠT LẠI" : "KÍCH HOẠT NGAY"} {"\u003C"}
-              </button>
-            </div>
-          </div>
-
-          {/* Div 6: HACK / Status */}
-          {vipHackUiVisible ? (
-            <div
-              style={{
-                marginTop: 12,
-                width: "100%",
-                borderRadius: 14,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "flex-start",
-                padding: "0 14px",
-                gap: 8,
-                minHeight: 150,
-              }}
-            >
-              <div
-                style={{
-                  height: 44,
-                  width: "100%",
-                  borderRadius: 12,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  background: "linear-gradient(180deg, #FF7A00 0%, #F77C00 100%)",
-                  border: "2px solid #FF3B30",
-                  color: "#ffffff",
-                  fontWeight: 900,
-                  fontSize: isNarrow ? 18 : 20,
-                  boxShadow: "0 0 20px rgba(247,124,0,0.25)",
-                  letterSpacing: 0.5,
-                }}
-              >
-                {formatMMSS(vipHackRemainingSec)}
-              </div>
-              <div
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 10,
-                }}
-              >
-
-                <button
-                  type="button"
-                  disabled={isSpinning || vipHackRemainingSec <= 0}
-                  onClick={stopVipHackNow}
-                  style={{
-                    width: "100%",
-                    height: 42,
-                    border: "none",
-                    borderRadius: 14,
-                    background: "#00472E",
-                    color: "#ffffff",
-                    fontWeight: 900,
-                    fontSize: 14,
-                    cursor: "pointer",
-                    boxShadow: "0 0 18px rgba(0, 71, 46, 0.35)",
-                  }}
-                >
-                  DỪNG HACK NGAY
-                </button>
-              </div>
-            </div>
-          ) : isVipHackPopupStarting || vipHackActive ? (
-            // Khi VIP hack vừa bấm (trong giai đoạn chờ 3s), ẩn hẳn nút HACK (10TOKEN)
-            <div style={{ marginTop: 12, width: "100%", height: 110 }} />
-          ) : hackPopupMode === "loading" ? (
-            <div
-              style={{
-                marginTop: 12,
-                width: "100%",
-                height: 56,
-                borderRadius: 14,
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                padding: "0 14px",
-                boxShadow: "0 0 22px rgba(0, 255, 225, 0.10)",
-                border: "1px solid rgba(0,255,225,0.35)",
-                background: "rgba(0,0,0,0.20)",
-                gap: 6,
-              }}
-            >
-              <div
-                style={{
-                  fontWeight: 900,
-                  color: "#00FFE1",
-                  fontSize: isNarrow ? 15 : 16,
-                  lineHeight: 1.1,
-                  textShadow: "0 0 10px rgba(0,255,225,0.20)",
-                  textAlign: "center",
-                  whiteSpace: "nowrap",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                }}
-              >
-                Đang phân tích dữ liệu với mức vốn {hackCapitalLabel}...
-              </div>
-              <div
-                style={{
-                  width: "100%",
-                  height: 10,
-                  borderRadius: 999,
-                  background: "rgba(0,0,0,0.35)",
-                  border: "1px solid rgba(0,255,225,0.25)",
-                  overflow: "hidden",
-                }}
-              >
-                <div
-                  style={{
-                    height: 10,
-                    width: `${hackProgress}%`,
-                    borderRadius: 999,
-                    background:
-                      "linear-gradient(90deg, #00ff7b 0%, #00ffd5 55%, #F7FF00 100%)",
-                    transition: "width 0.12s linear",
-                  }}
-                />
-              </div>
-            </div>
-          ) : !isHackPopupOpen ? (
-            <button
-              type="button"
-              disabled={isSpinning}
-              onClick={openHackPopup}
-              onMouseEnter={() => setIsHackBtnHovered(true)}
-              onMouseLeave={() => setIsHackBtnHovered(false)}
-              style={{
-                marginTop: 12,
-                width: "100%",
-                height: 56,
-                border: "none",
-                borderRadius: 14,
-                background: "linear-gradient(90deg, #00ff7b 0%, #00ffd5 100%)",
-                color: "#fff",
-                fontSize: isNarrow ? 23 : 26,
-                fontWeight: 900,
-                letterSpacing: 0.5,
-                cursor: isSpinning ? "not-allowed" : "pointer",
-                opacity: isSpinning ? 0.7 : 1,
-                boxShadow: "0 0 22px rgba(0, 255, 225, 0.22)",
-                transition: "transform 0.15s ease, filter 0.15s ease",
-                transform: isHackBtnHovered ? "translateY(2px)" : "translateY(0)",
-                filter: isHackBtnHovered ? "brightness(0.75)" : "brightness(1)",
-              }}
-            >
-              HACK (10TOKEN)
-            </button>
-          ) : (
-            <div style={{ marginTop: 12, width: "100%", height: 56 }} />
-          )}
-        </div>
-      </div>
+      <TableGameResultLayout
+        gameTitle={gameTitle}
+        gameImg={gameImg}
+        winPercent={winPercent}
+        manualValues={manualValues}
+        autoValues={autoValues}
+        timeSlotText={timeSlotText}
+        vipHackActive={vipHackActive}
+        vipHackUiVisible={vipHackUiVisible}
+        vipHackRemainingSec={vipHackRemainingSec}
+        isVipHackPopupStarting={isVipHackPopupStarting}
+        isVipFeatureCharging={isVipFeatureCharging}
+        isHackPopupOpen={isHackPopupOpen}
+        hackPopupMode={hackPopupMode}
+        hackProgress={hackProgress}
+        hackCapitalLabel={hackCapitalLabel}
+        isSpinning={isSpinning}
+        isHackBtnHovered={isHackBtnHovered}
+        setIsHackBtnHovered={setIsHackBtnHovered}
+        openHackPopup={openHackPopup}
+        handleVipFeatureClick={handleVipFeatureClick}
+        stopVipHackNow={stopVipHackNow}
+        formatMMSS={formatMMSS}
+      />
 
       {isHackPopupOpen && hackPopupMode === "input" ? (
         <div
           role="presentation"
+          className="frame-popup-overlay"
           onMouseDown={(e) => {
             if (e.target === e.currentTarget && hackPopupMode === "input") closeHackPopup();
-          }}
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            zIndex: 10001,
-            background: "rgba(0,0,0,0.65)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            backdropFilter: "blur(6px)",
-            padding: 14,
           }}
         >
           <div
             role="dialog"
             aria-modal="true"
-            style={{
-              width: "min(430px, calc(100vw - 28px))",
-              minHeight: isNarrow ? 150 : 265,
-              height: isNarrow ? "auto" : 265,
-              backgroundImage: "url('/assets/bg-result-nohu.png')",
-              backgroundSize: "100% 100%",
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "center",
-              borderRadius: 16,
-              padding: isNarrow ? 14 : 16,
-              boxShadow: "0 0 35px rgba(0, 255, 225, 0.18)",
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              gap: 12,
-            }}
+            className="frame-popup-panel"
+            style={{ backgroundImage: `url(${FRAME_POPUP_BG})` }}
           >
+            <div className="frame-popup-panel__inner">
             {hackPopupMode === "input" ? (
               <>
-                {/* Item 1: Title */}
-                <div
-                  style={{
-                    textAlign: "center",
-                    fontSize: isNarrow ? 18 : 20,
-                    fontWeight: 900,
-                    color: "#F7FF00",
-                    textShadow: "0 0 10px rgba(247,255,0,0.35)",
-                    letterSpacing: 0.5,
-                    marginBottom: -2,
-                  }}
-                >
-                  NHẬP SỐ DƯ HIỆN TẠI
-                </div>
+                <h2 className="frame-popup-panel__title">NHẬP SỐ DƯ HIỆN TẠI</h2>
 
-                {/* Item 2: Input */}
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    height: 44,
-                    borderRadius: 10,
-                    border: "1px solid rgba(0,255,225,0.55)",
-                    background: "rgba(0,0,0,0.18)",
-                    padding: "0 10px",
-                    gap: 10,
-                  }}
-                >
+                <div className="frame-popup-panel__input-row">
                   <style>{`
                     /* Hide number spinners for the hack popup input only */
                     .hack-popup-number-input::-webkit-outer-spin-button,
@@ -1496,50 +826,16 @@ const TableGameNew = () => {
                       if (allowed.includes(e.key)) return;
                       if (!/^\d$/.test(e.key)) e.preventDefault();
                     }}
-                    className="hack-popup-number-input"
-                    style={{
-                      flex: 1,
-                      border: "none",
-                      outline: "none",
-                      background: "transparent",
-                      textAlign: "center",
-                      fontSize: isNarrow ? 22 : 24,
-                      fontWeight: 900,
-                      color: "#F7FF00",
-                    }}
+                    className="hack-popup-number-input frame-popup-panel__input"
                   />
-                  <div
-                    style={{
-                      padding: "6px 14px",
-                      borderRadius: 8,
-                      color: "green",
-                      fontWeight: 800,
-                      fontSize: 14,
-                    }}
-                  >
-                    vnd
-                  </div>
+                  <span className="frame-popup-panel__input-currency">VNĐ</span>
                 </div>
 
-                {/* Item 3: Confirm button */}
                 <button
                   type="button"
+                  className="frame-popup-panel__btn-primary"
                   disabled={isSpinning}
                   onClick={confirmHackPopup}
-                  style={{
-                    width: "100%",
-                    height: isNarrow ? 46 : 48,
-                    border: "none",
-                    borderRadius: 10,
-                    background: "linear-gradient(90deg, #ff3b30 0%, #ee5a24 100%)",
-                    color: "#fff",
-                    fontSize: isNarrow ? 16 : 18,
-                    fontWeight: 900,
-                    letterSpacing: 0.5,
-                    cursor: isSpinning ? "not-allowed" : "pointer",
-                    boxShadow: "0 0 25px rgba(255, 59, 48, 0.25)",
-                    opacity: isSpinning ? 0.75 : 1,
-                  }}
                 >
                   BẮT ĐẦU QUÉT (10 TOKEN)
                 </button>
@@ -1548,10 +844,9 @@ const TableGameNew = () => {
               <>
                 <div
                   style={{
-                    color: "#00FFE1",
+                    color: "#fff",
                     fontWeight: 900,
                     fontSize: isNarrow ? 13 : 14,
-                    textShadow: "0 0 10px rgba(0,255,225,0.25)",
                     padding: "0 6px",
                     whiteSpace: "nowrap",
                     overflow: "hidden",
@@ -1568,10 +863,9 @@ const TableGameNew = () => {
                     height: 18,
                     borderRadius: 999,
                     background: "rgba(0, 0, 0, 0.35)",
-                    border: "1px solid rgba(0,255,225,0.25)",
+                    border: "1px solid rgba(255, 204, 0, 0.35)",
                     position: "relative",
                     overflow: "hidden",
-                    boxShadow: "0 0 22px rgba(0,255,225,0.12)",
                   }}
                 >
                   <div
@@ -1582,14 +876,14 @@ const TableGameNew = () => {
                       height: 22,
                       width: `${hackProgress}%`,
                       borderRadius: 999,
-                      background: "linear-gradient(90deg, #00ff7b 0%, #00ffd5 55%, #F7FF00 100%)",
-                      boxShadow: "0 0 22px rgba(0,255,225,0.25)",
+                      background: "linear-gradient(90deg, #e5b84a 0%, #ffcc00 100%)",
                       transition: "width 0.12s linear",
                     }}
                   />
                 </div>
               </>
             )}
+            </div>
           </div>
         </div>
       ) : null}
@@ -1597,168 +891,51 @@ const TableGameNew = () => {
       {isVipPopupOpen ? (
         <div
           role="presentation"
+          className="frame-popup-overlay frame-popup-overlay--above"
           onMouseDown={(e) => {
             if (e.target === e.currentTarget) closeVipPopup();
-          }}
-          style={{
-            position: "fixed",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            zIndex: 10002,
-            background: "rgba(0,0,0,0.65)",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            backdropFilter: "blur(6px)",
-            padding: 14,
           }}
         >
           <div
             role="dialog"
             aria-modal="true"
-            style={{
-              width: "min(430px, calc(100vw - 28px))",
-              maxWidth: "100%",
-              backgroundImage: "url('/assets/bg-result-nohu.png')",
-              backgroundSize: "100% 100%",
-              backgroundRepeat: "no-repeat",
-              backgroundPosition: "center",
-              borderRadius: 18,
-              padding: isNarrow ? 14 : 16,
-              boxShadow: "0 0 35px rgba(0,255,225,0.18)",
-              position: "relative",
-              color: "#fff",
-            }}
+            className="frame-popup-panel frame-popup-panel--wide"
+            style={{ backgroundImage: `url(${FRAME_POPUP_BG})` }}
           >
             <button
               type="button"
+              className="frame-popup-panel__close"
               onClick={closeVipPopup}
               aria-label="Đóng"
-              style={{
-                position: "absolute",
-                top: 6,
-                right: 10,
-                width: 28,
-                height: 28,
-                borderRadius: 8,
-                border: "1px solid rgba(0,255,225,0.25)",
-                background: "rgba(0,0,0,0.35)",
-                color: "#fff",
-                fontSize: 18,
-                cursor: "pointer",
-              }}
             >
               ×
             </button>
+            <div className="frame-popup-panel__inner">
 
             {vipHackActive || isVipHackPopupStarting ? (
               null
             ) : null}
 
-            <div
-              style={{
-                textAlign: "center",
-                fontWeight: 900,
-                letterSpacing: 0.5,
-                color: "#F7FF00",
-                fontSize: isNarrow ? 18 : 20,
-                textShadow: "0 0 10px rgba(247,255,0,0.2)",
-                marginTop: 6,
-              }}
-            >
+            <h2 className="frame-popup-panel__title" style={{ marginTop: 6 }}>
               TỶ LỆ THẮNG LỚN
-            </div>
+            </h2>
 
-            <div
-              style={{
-                marginTop: 6,
-                textAlign: "center",
-                fontWeight: 900,
-                color: "#00FFE1",
-                fontSize: isNarrow ? 14 : 15,
-              }}
-            >
+            <p className="frame-popup-panel__subtitle">
               MỨC CƯỢC ĐỀ NGHỊ: {vipRecommendBet}
-            </div>
+            </p>
 
-            <div
-              style={{
-                marginTop: 14,
-                display: "grid",
-                gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-                gap: isNarrow ? 6 : 10,
-              }}
-            >
-              <div
-                style={{
-                  borderRadius: 10,
-                  border: "1px solid rgba(0,255,225,0.20)",
-                  background: "rgba(0,0,0,0.40)",
-                  padding: "10px 6px",
-                  textAlign: "center",
-                }}
-              >
-                <div style={{ fontWeight: 900, fontSize: isNarrow ? 10 : 12, lineHeight: 1.2 }}>
-                  THẮNG LỚN
-                </div>
-                <div
-                  style={{
-                    color: "#F7FF00",
-                    fontWeight: 900,
-                    fontSize: isNarrow ? 18 : 24,
-                    marginTop: 4,
-                  }}
-                >
-                  {vipPctBig}%
-                </div>
+            <div className="frame-popup-panel__stat-grid">
+              <div className="frame-popup-panel__stat-card">
+                <div className="frame-popup-panel__stat-label">THẮNG LỚN</div>
+                <div className="frame-popup-panel__stat-value">{vipPctBig}%</div>
               </div>
-
-              <div
-                style={{
-                  borderRadius: 10,
-                  border: "1px solid rgba(0,255,225,0.20)",
-                  background: "rgba(0,0,0,0.40)",
-                  padding: "10px 6px",
-                  textAlign: "center",
-                }}
-              >
-                <div style={{ fontWeight: 900, fontSize: isNarrow ? 10 : 12, lineHeight: 1.2 }}>
-                  THẮNG SIÊU LỚN
-                </div>
-                <div
-                  style={{
-                    color: "#F7FF00",
-                    fontWeight: 900,
-                    fontSize: isNarrow ? 18 : 24,
-                    marginTop: 4,
-                  }}
-                >
-                  {vipPctSuper}%
-                </div>
+              <div className="frame-popup-panel__stat-card">
+                <div className="frame-popup-panel__stat-label">THẮNG SIÊU LỚN</div>
+                <div className="frame-popup-panel__stat-value">{vipPctSuper}%</div>
               </div>
-
-              <div
-                style={{
-                  borderRadius: 10,
-                  border: "1px solid rgba(0,255,225,0.20)",
-                  background: "rgba(0,0,0,0.40)",
-                  padding: "10px 6px",
-                  textAlign: "center",
-                }}
-              >
-                <div style={{ fontWeight: 900, fontSize: isNarrow ? 10 : 12, lineHeight: 1.2 }}>
-                  THẮNG CỰC LỚN
-                </div>
-                <div
-                  style={{
-                    color: "#ff6b6b",
-                    fontWeight: 900,
-                    fontSize: isNarrow ? 18 : 24,
-                    marginTop: 4,
-                  }}
-                >
+              <div className="frame-popup-panel__stat-card">
+                <div className="frame-popup-panel__stat-label">THẮNG CỰC LỚN</div>
+                <div className="frame-popup-panel__stat-value frame-popup-panel__stat-value--hot">
                   {vipPctUltra}%
                 </div>
               </div>
@@ -1766,25 +943,14 @@ const TableGameNew = () => {
 
           <button
             type="button"
+            className="frame-popup-panel__btn-primary"
             disabled={isVipHackPopupStarting || vipHackActive}
             onClick={startVipHackNow}
-            style={{
-              marginTop: 14,
-              width: "100%",
-              height: 54,
-              border: "none",
-              borderRadius: 14,
-              background: "linear-gradient(90deg, #00ff7b 0%, #00ffd5 100%)",
-              color: "#fff",
-              fontWeight: 900,
-              fontSize: isNarrow ? 18 : 20,
-              boxShadow: "0 0 26px rgba(0,255,225,0.18)",
-              cursor: isVipHackPopupStarting || vipHackActive ? "not-allowed" : "pointer",
-              opacity: isVipHackPopupStarting || vipHackActive ? 0.8 : 1,
-            }}
+            style={{ marginTop: 4, minHeight: 54, fontSize: isNarrow ? 16 : 18 }}
           >
             DÙNG HACK NGAY
           </button>
+            </div>
           </div>
         </div>
       ) : null}

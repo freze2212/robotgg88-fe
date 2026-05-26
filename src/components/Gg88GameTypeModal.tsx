@@ -5,8 +5,8 @@ import { getAssetUrl } from "../utils/assetUrl";
 import "./Gg88GameTypeModal.css";
 
 /** Đường dẫn trong app — khớp router.js */
-export const GG88_ROUTE_NOHU = "/NH";
-export const GG88_ROUTE_BACCARAT = "/casino/lobby";
+export const GG88_ROUTE_SLOT = "/NH";
+export const GG88_ROUTE_BAN_CA = "/casino/lobby";
 
 export type Gg88GameTypeModalProps = {
   isOpen: boolean;
@@ -14,7 +14,7 @@ export type Gg88GameTypeModalProps = {
 };
 
 /**
- * Popup khi chọn sảnh GG88: chọn NỔ HŨ hoặc BACCARAT.
+ * Popup chọn loại game GG88 — nền frame-popup, SLOT GAME / BẮN CÁ.
  */
 const Gg88GameTypeModal: React.FC<Gg88GameTypeModalProps> = ({
   isOpen,
@@ -40,14 +40,14 @@ const Gg88GameTypeModal: React.FC<Gg88GameTypeModalProps> = ({
     };
   }, [isOpen, onKeyDown]);
 
-  const goNoHu = useCallback(() => {
+  const goSlotGame = useCallback(() => {
     onClose();
-    navigate(GG88_ROUTE_NOHU);
+    navigate(GG88_ROUTE_SLOT);
   }, [navigate, onClose]);
 
-  const goBaccarat = useCallback(() => {
+  const goBanCa = useCallback(() => {
     onClose();
-    navigate(GG88_ROUTE_BACCARAT);
+    navigate(GG88_ROUTE_BAN_CA);
   }, [navigate, onClose]);
 
   if (!isOpen) return null;
@@ -68,27 +68,27 @@ const Gg88GameTypeModal: React.FC<Gg88GameTypeModalProps> = ({
       <div
         className="gg88-game-modal__panel"
         style={{
-          backgroundImage: `url(${getAssetUrl("/assets/bg-modal.png")})`,
+          backgroundImage: `url(${getAssetUrl("/assets/frame-popup.png")})`,
         }}
       >
         <div className="gg88-game-modal__inner">
           <h2 id="gg88-game-type-title" className="gg88-game-modal__title">
-            CHỌN LOẠI GAME
+            /CHỌN LOẠI GAME/
           </h2>
           <div className="gg88-game-modal__actions">
             <button
               type="button"
               className="gg88-game-modal__choice"
-              onClick={goNoHu}
+              onClick={goSlotGame}
             >
-              NỔ HŨ
+              SLOT GAME
             </button>
             <button
               type="button"
               className="gg88-game-modal__choice"
-              onClick={goBaccarat}
+              onClick={goBanCa}
             >
-              BACCARAT
+              BẮN CÁ
             </button>
           </div>
         </div>

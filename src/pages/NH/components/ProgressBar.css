@@ -1,107 +1,149 @@
-/* ---- NH "basic" card (238x332) ---- */
-.nh-basic-card {
-    width: 238px;
-    height: 332px;
-    background: transparent;
-    border: 1px solid #00FFE1;
-    border-radius: 12px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 10px 12px 14px;
-    background: #00281AD9;
+/* Card game slot — kích thước cũ 238×332, nền #3B301E, viền #FFCC00 */
+
+.nh-slot-card {
+  width: 238px;
+  height: 332px;
+  max-width: 238px;
+  box-sizing: border-box;
+  background: #3b301e;
+  border: 2px solid #ffcc00;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 12px 14px;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-.nh-basic-game-image {
-    width: 170px;
-    height: 170px;
-    border: 2px solid #00FFE1;
-    border-radius: 16px;
-    object-fit: cover;
-    margin-top: 6px;
-    position: relative;
-    z-index: 1;
+.nh-slot-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 16px rgba(255, 204, 0, 0.25);
 }
 
-.nh-basic-game-title {
-    width: 100%;
-    text-align: center;
-    margin-top: 6px;
-    padding: 0 4px;
-    color: #FFD84D;
-    font-weight: 900;
-    font-size: 13px;
-    line-height: 1.2;
-    text-shadow: 0 0 10px rgba(255, 216, 77, 0.35);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: block;
-    position: relative;
-    z-index: 2;
+.nh-slot-card__image-wrap {
+  flex-shrink: 0;
+  margin-top: 6px;
+  border-radius: 16px;
+  line-height: 0;
+  /* DR1 — Figma: X0 Y0 Blur 38.6 Spread 0 #FFB300 */
+  box-shadow: 0 0 38.6px 0 #ffb300;
+  transition: box-shadow 0.25s ease;
 }
 
-.nh-basic-bottom {
-    width: 100%;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 8px;
-    padding-bottom: 6px;
+.nh-slot-card:hover .nh-slot-card__image-wrap {
+  box-shadow: 0 0 42px 2px #ffb300;
 }
 
-.nh-basic-play {
-    width: 82px;
-    height: 30px;
-    border-radius: 8px;
-    border: 1px solid #FFD84D;
-    background: rgba(255, 216, 77, 0.12);
-    color: #FFD84D;
-    font-weight: 900;
-    letter-spacing: 0.3px;
-    cursor: pointer;
-    margin: 0 auto;
+.nh-slot-card__image {
+  width: 170px;
+  height: 170px;
+  border-radius: 16px;
+  object-fit: cover;
+  display: block;
+  filter: drop-shadow(0 0 12px rgba(255, 179, 0, 0.65));
 }
 
-.nh-basic-bar {
-    width: 100%;
+.nh-slot-card__title {
+  width: 100%;
+  margin: 6px 0 6px;
+  padding: 0 4px;
+  text-align: center;
+  color: #ffd700;
+  font-family: "Roboto", Arial, sans-serif;
+  font-weight: 900;
+  font-size: 13px;
+  line-height: 1.2;
+  text-shadow: 0 0 10px rgba(255, 216, 77, 0.35);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.nh-basic-bar__label {
-    color: #FFD84D;
-    font-weight: 900;
-    font-size: 12px;
-    margin-bottom: 4px;
-    text-align: center;
+.nh-slot-card__tag {
+  display: inline-block;
+  min-width: 72px;
+  padding: 4px 14px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  font-family: "Roboto", Arial, sans-serif;
+  font-weight: 800;
+  font-size: 12px;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  flex-shrink: 0;
 }
 
-.nh-basic-bar__track {
-    height: 12px;
-    border-radius: 999px;
-    border: 1px solid rgba(255, 216, 77, 0.55);
-    background: rgba(0, 0, 0, 0.25);
-    overflow: hidden;
+.nh-slot-card__tag--wait {
+  background: #1a1a1a;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.nh-basic-bar__fill {
-    height: 100%;
-    width: 0%;
-    border-radius: 999px;
-    background: linear-gradient(90deg, #FFD84D 0%, #FF9F1C 100%);
-    transition: width 0.35s ease-in-out;
+.nh-slot-card__tag--play {
+  background: #ffcc00;
+  color: #000;
 }
 
-.nh-basic-bar__fill--fixed {
-    transition: none;
+.nh-slot-card__tag--jackpot {
+  background: #22c55e;
+  color: #fff;
+}
+
+.nh-slot-card__bar-wrap {
+  width: 100%;
+  margin-top: auto;
+  padding-bottom: 6px;
+}
+
+.nh-slot-card__bar-track {
+  position: relative;
+  height: 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 216, 77, 0.55);
+  background: rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+.nh-slot-card__bar-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 0;
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+
+.nh-slot-card__bar-fill--wait {
+  background: linear-gradient(90deg, #8b2020 0%, #e53935 100%);
+}
+
+.nh-slot-card__bar-fill--play {
+  background: linear-gradient(90deg, #c47a00 0%, #ffb020 100%);
+}
+
+.nh-slot-card__bar-fill--jackpot {
+  background: linear-gradient(90deg, #15803d 0%, #4ade80 100%);
+}
+
+.nh-slot-card__bar-pct {
+  display: none;
+}
+
+.nh-slot-card__bar-label {
+  color: #ffd84d;
+  font-weight: 900;
+  font-size: 12px;
+  margin-bottom: 4px;
+  text-align: center;
 }
 
 @media (max-width: 520px) {
-    .nh-basic-card {
-        width: 100%;
-        max-width: 238px;
-        height: 332px;
-    }
+  .nh-slot-card {
+    width: 100%;
+    max-width: 238px;
+    height: 332px;
+  }
 }

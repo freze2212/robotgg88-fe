@@ -1,0 +1,65 @@
+.slot-game-page {
+  flex: 1 1 auto;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 16px 48px;
+  box-sizing: border-box;
+}
+
+@media (max-width: 480px) {
+  .slot-game-page {
+    padding: 0 12px max(32px, env(safe-area-inset-bottom, 0px));
+  }
+
+  .slot-game-grid {
+    gap: 10px;
+  }
+}
+
+/* Lưới giống cũ: 2 → 3 → 4 → 5 cột, gap 8/16px */
+.slot-game-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+  justify-items: center;
+}
+
+@media (min-width: 640px) {
+  .slot-game-grid {
+    gap: 16px;
+  }
+}
+
+@media (min-width: 768px) {
+  .slot-game-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .slot-game-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1280px) {
+  .slot-game-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+.slot-game-grid__item {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.slot-game-empty {
+  grid-column: 1 / -1;
+  padding: 32px 16px;
+  text-align: center;
+  color: #f5e6a8;
+  font-size: 15px;
+}

@@ -1,0 +1,172 @@
+/* SweetAlert / loading — nền frame-popup + màu popup GG88 */
+
+.swal-loading-modal.swal2-popup,
+.custom-swal.swal2-popup,
+.swal2-popup.swal-frame-popup {
+  background-color: transparent !important;
+  background-image: var(--frame-popup-bg-url) !important;
+  background-size: 100% 100% !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: 0 20px 56px rgba(0, 0, 0, 0.65) !important;
+  width: min(520px, calc(100vw - 32px)) !important;
+  max-width: 520px !important;
+  min-height: 280px !important;
+  padding: 18% 14% 14% !important;
+  box-sizing: border-box !important;
+}
+
+.swal-loading-modal #swal2-title,
+.custom-swal #swal2-title,
+.swal-frame-popup #swal2-title {
+  color: #ffff00 !important;
+  font-weight: 900 !important;
+  font-size: clamp(1.1rem, 3vw, 1.35rem) !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase;
+  margin-bottom: 8px !important;
+}
+
+.swal-loading-modal #swal2-html-container,
+.swal-loading-modal .swal-loading-subtext,
+.custom-swal #swal2-html-container,
+.custom-swal #swal2-content,
+#swal2-content {
+  color: #fff !important;
+  font-weight: 600 !important;
+}
+
+.swal-loading-modal .swal-loading-subtext {
+  display: block;
+  margin: 0 0 12px 0 !important;
+  font-size: 1rem !important;
+}
+
+.swal-loading-modal .swal-loading-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.swal-loading-modal .swal-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: #ffcc00;
+  animation: swal-dot-pulse 0.8s ease-in-out infinite;
+}
+
+.swal-loading-modal .swal-dot-orange {
+  animation-delay: 0.2s;
+  background-color: #ffff00;
+}
+
+.swal-loading-modal .swal-dot-cyan {
+  background-color: #ffcc00;
+}
+
+@keyframes swal-dot-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.75;
+  }
+}
+
+.swal2-confirm {
+  background: #ffcc00 !important;
+  color: #000 !important;
+  font-weight: 900 !important;
+  border: none !important;
+  border-radius: 8px !important;
+  text-transform: uppercase;
+}
+
+.swal2-cancel {
+  background: #5a0a0a !important;
+  color: #ffff00 !important;
+  font-weight: 900 !important;
+  border: 1px solid #ff3333 !important;
+  border-radius: 8px !important;
+  text-transform: uppercase;
+}
+
+.swal-loading-modal .swal2-loader {
+  display: none !important;
+}
+
+/* Container — căn giữa + safe area trên mobile */
+.swal2-container {
+  padding: max(12px, env(safe-area-inset-top, 0px))
+    max(12px, env(safe-area-inset-right, 0px))
+    max(12px, env(safe-area-inset-bottom, 0px))
+    max(12px, env(safe-area-inset-left, 0px)) !important;
+}
+
+.custom-swal .swal2-icon {
+  margin: 0.5em auto 0.75em !important;
+  transform: scale(0.9);
+}
+
+.custom-swal .swal2-icon.swal2-warning {
+  border-color: #ffcc00 !important;
+  color: #ffcc00 !important;
+}
+
+.custom-swal .swal2-icon.swal2-error {
+  border-color: #ff6b6b !important;
+}
+
+.custom-swal .swal2-icon.swal2-success {
+  border-color: #ffcc00 !important;
+}
+
+.custom-swal .swal2-actions {
+  gap: 10px !important;
+  margin-top: 12px !important;
+}
+
+@media (max-width: 480px) {
+  .swal-loading-modal.swal2-popup,
+  .custom-swal.swal2-popup,
+  .swal2-popup.swal-frame-popup {
+    width: min(400px, calc(100vw - 24px)) !important;
+    max-width: calc(100vw - 24px) !important;
+    min-height: 0 !important;
+    max-height: min(85dvh, 400px) !important;
+    padding: 18% 12% 14% !important;
+    margin: 0 auto !important;
+  }
+
+  .swal-loading-modal #swal2-title,
+  .custom-swal #swal2-title {
+    font-size: clamp(1rem, 4.5vw, 1.2rem) !important;
+    padding: 0 4px !important;
+  }
+
+  .swal-loading-modal .swal-loading-subtext,
+  .custom-swal #swal2-html-container {
+    font-size: 0.9rem !important;
+  }
+
+  .custom-swal .swal2-actions {
+    flex-direction: column-reverse !important;
+    width: 100% !important;
+    padding: 0 8px !important;
+  }
+
+  .swal2-confirm,
+  .swal2-cancel {
+    width: 100% !important;
+    margin: 0 !important;
+    min-height: 44px !important;
+  }
+}
