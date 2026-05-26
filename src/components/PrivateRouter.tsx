@@ -31,7 +31,17 @@ const PrivateRoute = ({ children }: { children: JSX.Element }) => {
   return (
     <>
       <BackgroundVideo />
-      <div style={{ position: "relative", zIndex: 1 }}>{children}</div>
+      <div
+        style={{
+          position: "relative",
+          zIndex: 1,
+          display: "flex",
+          flexDirection: "column",
+          minHeight: "100dvh",
+        }}
+      >
+        {children}
+      </div>
     </>
   );
 };

@@ -1,0 +1,209 @@
+/* Hero chọn sảnh slot — theo mockup vàng GG88 */
+
+.slot-lobby-hero {
+  position: relative;
+  width: 100%;
+  padding: 8px 0 28px;
+  margin-bottom: 8px;
+  box-sizing: border-box;
+}
+
+/* Layout vừa phải — giữa bản nhỏ và bản quá to */
+.slot-lobby-page {
+  width: 100%;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+
+.slot-lobby-page__inner {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+.slot-lobby-hero__inner {
+  position: relative;
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0 4px;
+  box-sizing: border-box;
+}
+
+.slot-lobby-grid {
+  gap: 10px;
+}
+
+.all-programs .box-game {
+  width: 88%;
+  max-width: 260px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.all-programs .box-game img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.all-programs .box-game label {
+  font-size: clamp(0.9rem, 1.1vw, 1.05rem);
+}
+
+.slot-lobby-back {
+  position: absolute;
+  top: 0;
+  left: 16px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px 10px 16px;
+  border: 2px solid #ffcc00;
+  border-radius: 9999px;
+  background: #b47f00;
+  color: #fff;
+  font-family: "Roboto", Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: filter 0.2s, transform 0.15s;
+}
+
+.slot-lobby-back:hover {
+  filter: brightness(1.06);
+}
+
+.slot-lobby-back:active {
+  transform: scale(0.98);
+}
+
+.slot-lobby-back__chevrons {
+  font-size: 16px;
+  line-height: 1;
+  letter-spacing: -2px;
+}
+
+.slot-lobby-title {
+  margin: 0;
+  padding: 48px 120px 20px;
+  text-align: center;
+  font-family: "Roboto", Arial, sans-serif;
+  font-size: clamp(1.5rem, 4.5vw, 2.75rem);
+  font-weight: 900;
+  line-height: 1.15;
+  letter-spacing: 0.04em;
+  color: #fff;
+  text-transform: uppercase;
+  /* DR1 — blur 38.6px #FFB300 */
+  text-shadow: 0 0 38.6px #ffb300;
+}
+
+.slot-lobby-search {
+  display: flex;
+  align-items: stretch;
+  max-width: 720px;
+  margin: 0 auto;
+  border: 2px solid #ffcc00;
+  background: #b47f00;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.slot-lobby-search__field {
+  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 0 14px;
+  background: #b47f00;
+}
+
+.slot-lobby-search__icon {
+  flex-shrink: 0;
+  color: #fff;
+  font-size: 16px;
+  line-height: 1;
+  opacity: 0.9;
+}
+
+.slot-lobby-search__input {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding: 12px 0;
+  border: none;
+  background: transparent;
+  color: #f5e6a8;
+  font-family: "Courier New", Consolas, monospace;
+  font-size: 14px;
+  outline: none;
+}
+
+.slot-lobby-search__input::placeholder {
+  color: rgba(245, 230, 168, 0.65);
+}
+
+.slot-lobby-search__submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding: 12px 20px;
+  border: none;
+  border-left: 2px solid #ffcc00;
+  background: #b47f00;
+  color: #fff;
+  font-family: "Roboto", Arial, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.2s;
+}
+
+.slot-lobby-search__submit:hover {
+  filter: brightness(1.12);
+}
+
+.all-programs .slot-lobby-empty {
+  grid-column: 1 / -1;
+  padding: 32px 16px;
+  text-align: center;
+  color: #f5e6a8;
+  font-size: 15px;
+}
+
+@media (max-width: 768px) {
+  .slot-lobby-title {
+    padding: 52px 16px 16px;
+    font-size: clamp(1.25rem, 6vw, 1.75rem);
+  }
+
+  .slot-lobby-back {
+    position: relative;
+    left: 0;
+    margin-bottom: 12px;
+  }
+
+  .slot-lobby-hero__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .slot-lobby-search {
+    flex-direction: column;
+  }
+
+  .slot-lobby-search__submit {
+    border-left: none;
+    border-top: 1px solid rgba(255, 215, 0, 0.45);
+  }
+}

@@ -1,6 +1,6 @@
-import React from 'react';
-import './ProgressBar.css';
-import { useNavigate } from 'react-router-dom';
+import React from "react";
+import "./ProgressBar.css";
+import { useNavigate } from "react-router-dom";
 
 interface ProgressBarProps {
   percentage: number;
@@ -9,44 +9,65 @@ interface ProgressBarProps {
   id: string;
 }
 
-const ProgressBar: React.FC<ProgressBarProps> = ({ percentage, title, imageUrl, id }) => {
+type StatusVariant = "wait" | "play" | "jackpot";
+
+function getGameStatus(percent: number): { label: string; variant: StatusVariant } {
+  if (percent >= 86) return { label: "JACKPOT", variant: "jackpot" };
+  if (percent >= 80) return { label: "Chơi", variant: "play" };
+  return { label: "Chờ", variant: "wait" };
+}
+
+const ProgressBar: React.FC<ProgressBarProps> = ({
+  percentage,
+  title,
+  imageUrl,
+  id,
+}) => {
   const navigate = useNavigate();
+  const fixedPercent = Math.max(0, Math.min(100, Math.round(percentage)));
+  const status = getGameStatus(fixedPercent);
 
   const handleClick = () => {
     localStorage.setItem("title_img", imageUrl);
     localStorage.setItem("title_text", title);
-    localStorage.setItem("win_percent", percentage.toString());
+    localStorage.setItem("win_percent", fixedPercent.toString());
     navigate(`/NH/table/${id}`);
   };
 
-  const fixedPercent = Math.max(0, Math.min(100, Math.round(percentage)));
-
   return (
-    <div onClick={handleClick} className="nh-basic-card" role="button" tabIndex={0}>
-      <img className="nh-basic-game-image" src={imageUrl} alt={title} loading="lazy" />
-      <div className="nh-basic-game-title" title={title}>
+    <div
+      onClick={handleClick}
+      className="nh-slot-card"
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          handleClick();
+        }
+      }}
+    >
+      <div className="nh-slot-card__image-wrap">
+        <img
+          className="nh-slot-card__image"
+          src={imageUrl}
+          alt={title}
+          loading="lazy"
+        />
+      </div>
+      <div className="nh-slot-card__title" title={title}>
         {title}
       </div>
-      <div className="nh-basic-bottom">
-        <button
-          type="button"
-          className="nh-basic-play"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleClick();
-          }}
-        >
-          Chơi
-        </button>
-
-        <div className="nh-basic-bar">
-          <div className="nh-basic-bar__label">{fixedPercent}%</div>
-          <div className="nh-basic-bar__track">
-            <div
-              className="nh-basic-bar__fill nh-basic-bar__fill--fixed"
-              style={{ width: `${fixedPercent}%` }}
-            />
-          </div>
+      <span className={`nh-slot-card__tag nh-slot-card__tag--${status.variant}`}>
+        {status.label}
+      </span>
+      <div className="nh-slot-card__bar-wrap">
+        <div className="nh-slot-card__bar-label">{fixedPercent}%</div>
+        <div className="nh-slot-card__bar-track">
+          <div
+            className={`nh-slot-card__bar-fill nh-slot-card__bar-fill--${status.variant}`}
+            style={{ width: `${fixedPercent}%` }}
+          />
         </div>
       </div>
     </div>

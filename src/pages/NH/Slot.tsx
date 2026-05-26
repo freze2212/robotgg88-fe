@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import Swal from "sweetalert2";
 
 import Header from "../../components/Header";
 import ModalConfirmLogout from "../../components/ModalConfirmLogout";
-import styles from './style.module.css';
-import { getFormattedTime } from "../../utilities/axios.utilities";
+import "./HomeNH.css";
+import "./SlotGame.css";
 import ProgressBar from '../NH/components/ProgressBar';
 import { mockApi } from "../../services/mockApi";
 
@@ -241,17 +241,17 @@ const Slot = () => {
   const [isShowLogout, setIsShowLogout] = useState(false);
   const [tableList, setTableList] = useState<TableItem[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
   const [isMobile, setIsMobile] = useState<boolean>(
-    typeof window !== "undefined" ? window.innerWidth <= 430 : false
+    typeof window !== "undefined" ? window.innerWidth <= 480 : false
   );
   const { room } = useParams();
   const roomKeyRaw = (room ?? "").toString().toUpperCase();
   // Alias: DG uses PG list/icons/order (same as FE expectation)
   const roomKey = roomKeyRaw === "DG" ? "PG" : roomKeyRaw;
-  const currentTime = getFormattedTime();
   const [isLoading, setIsLoading] = useState(false);
 
-  const MOBILE_BREAKPOINT = 430;
+  const MOBILE_BREAKPOINT = 480;
   const MOBILE_INITIAL_VISIBLE = 12;
   const DESKTOP_INITIAL_VISIBLE = 40;
   const MOBILE_STEP_VISIBLE = 12;
@@ -300,7 +300,7 @@ const Slot = () => {
   );
 
   useEffect(() => {
-    const onResize = () => setIsMobile(window.innerWidth <= 430);
+    const onResize = () => setIsMobile(window.innerWidth <= MOBILE_BREAKPOINT);
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
@@ -428,264 +428,93 @@ const Slot = () => {
 
   localStorage.setItem("NH_PAGE", String(roomKey));
 
+  const hallTitle = `${roomKey || "PG"} GAME`;
+
   return (
-    <div>
+    <div className="page-with-header">
       <Header setIsShowLogout={() => setIsShowLogout(true)} />
       {isLoading && (
-        <div className={`container-fluid lobby-bg position-relative mx-auto mb-5 max-w-screen-xl`}>
-          <div className="container mx-auto">
-            <div className="my-7">
-              {/* Top: BACK + tiêu đề */}
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: isMobile ? "column" : "row",
-                  alignItems: isMobile ? "stretch" : "center",
-                  justifyContent: "space-between",
-                  gap: isMobile ? 10 : 16,
-                  marginBottom: 18,
-                }}
-              >
-                <a
-                  href="/NH"
-                  className="text-white no-underline"
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 8,
-                    padding: isMobile ? "6px 10px" : "8px 16px",
-                    background: "rgba(0,0,0,0.4)",
-                    borderRadius: 8,
-                    border: "1px solid rgba(255,255,255,0.2)",
-                    fontWeight: 700,
-                    textTransform: "uppercase",
-                    letterSpacing: 1,
-                    fontSize: isMobile ? 12 : 14,
-                    width: isMobile ? "fit-content" : 110,
-                  }}
-                >
-                  <span style={{ fontSize: 18 }}>‹‹</span>
-                  <span>BACK</span>
-                </a>
-
-                <div style={{ flex: 1, textAlign: "center", minWidth: 0 }}>
-                  <h1
-                    style={{
-                      margin: 0,
-                      color: "#fff",
-                      fontSize: isMobile ? "clamp(22px, 7vw, 30px)" : "clamp(28px, 5vw, 48px)",
-                      fontWeight: 900,
-                      textShadow:
-                        "0 0 20px rgba(255,255,255,0.5), 0 0 40px rgba(255,0,0,0.3)",
-                      letterSpacing: 2,
-                      fontFamily: '"Source Code Pro", monospace',
-                    }}
-                  >
-                    {(room ?? "PG").toString().toUpperCase()} GAME
-                  </h1>
-                  {!isMobile && (
-                    <p
-                      style={{
-                        margin: "8px 0 0",
-                        color: "#fff",
-                        fontSize: "clamp(12px, 3.5vw, 16px)",
-                        fontWeight: 600,
-                        letterSpacing: 2,
-                        textShadow: "0 0 12px rgba(255,0,0,0.4)",
-                        fontFamily: '"Source Code Pro", monospace',
-                      }}
-                    >
-                      [ CÔNG NGHỆ AI ]
-                    </p>
-                  )}
-                </div>
-
-                {!isMobile && <div style={{ flex: "0 0 auto", width: 100 }} aria-hidden />}
-              </div>
-
-              {/* Tabs */}
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  gap: 18,
-                  marginBottom: 14,
-                }}
-              >
-                {["TẤT CẢ", "JACKPOT", "CHỌI"].map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    style={{
-                      height: 34,
-                      padding: "0 18px",
-                      borderRadius: 8,
-                      border: "1px solid rgba(255,255,255,0.28)",
-                      background: "rgba(0,0,0,0.35)",
-                      color: "#fff",
-                      fontWeight: 800,
-                      letterSpacing: 0.5,
-                      cursor: "default",
-                    }}
-                  >
-                    {t}
-                  </button>
-                ))}
-              </div>
-
-              {/* Ô tìm kiếm + nút Tìm ngay */}
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: isMobile ? "column" : "row",
-                  flexWrap: "nowrap",
-                  alignItems: "stretch",
-                  justifyContent: "center",
-                  gap: 12,
-                  maxWidth: isMobile ? "100%" : 560,
-                  margin: "0 auto",
-                }}
-              >
-                <div
-                  style={{
-                    flex: isMobile ? "1 1 100%" : "1 1 280px",
-                    minWidth: isMobile ? "100%" : 200,
-                    position: "relative",
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  <span
-                    style={{
-                      position: "absolute",
-                      left: 14,
-                      color: "#00FFE1",
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <svg
-                      width="18"
-                      height="18"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                    >
-                      <circle cx="11" cy="11" r="8" />
-                      <path d="m21 21-4.35-4.35" />
-                    </svg>
-                  </span>
-                  <input
-                    type="search"
-                    value={searchTerm}
-                    onChange={handleSearch}
-                    placeholder="Tìm kiếm game..."
-                    style={{
-                      width: "100%",
-                      height: isMobile ? 40 : 44,
-                      paddingLeft: 42,
-                      paddingRight: 14,
-                      color: "#F2FFFB",
-                      background: "rgba(0, 68, 55, 0.7)",
-                      border: "1px solid rgba(0, 255, 225, 0.85)",
-                      borderRadius: 12,
-                      outline: "none",
-                      boxShadow: "0 0 10px rgba(0, 255, 225, 0.18)",
-                      fontFamily: "inherit",
-                      fontSize: isMobile ? 14 : 15,
-                    }}
-                  />
-                </div>
-
+        <div className="container-fluid lobby-bg position-relative mx-auto mb-5 slot-lobby-page">
+          <div className="slot-game-page">
+            <section className="slot-lobby-hero" aria-label="Danh sách game">
+              <div className="slot-lobby-hero__inner">
                 <button
                   type="button"
-                  onClick={() => {}}
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 8,
-                    justifyContent: "center",
-                    height: isMobile ? 40 : 44,
-                    paddingLeft: isMobile ? 16 : 20,
-                    paddingRight: isMobile ? 16 : 20,
-                  color: "#00FFE1",
-                    fontWeight: 700,
-                  background:
-                    "linear-gradient(180deg, rgba(0, 255, 225, 0.18) 0%, rgba(0, 68, 55, 0.55) 100%)",
-                  border: "1px solid rgba(0, 255, 225, 0.85)",
-                  borderRadius: 12,
-                    cursor: "pointer",
-                  boxShadow: "0 0 12px rgba(0, 255, 225, 0.18)",
-                    fontFamily: "inherit",
-                    fontSize: isMobile ? 14 : 15,
-                    width: isMobile ? "100%" : "auto",
-                  }}
+                  className="slot-lobby-back"
+                  onClick={() => navigate("/NH")}
+                  aria-label="Về chọn sảnh"
                 >
-                  <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <circle cx="11" cy="11" r="8" />
-                    <path d="m21 21-4.35-4.35" />
-                  </svg>
-                  <span>Tìm ngay</span>
+                  <span className="slot-lobby-back__chevrons" aria-hidden>
+                    &laquo;&laquo;
+                  </span>
+                  BACK
                 </button>
-              </div>
-            </div>
-            <label className={"font-semibold text-white text-center block " + styles.loadTime}>
-              {room} | Load Time: {currentTime}
-            </label>
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 sm:gap-4">
-              {visibleTableList.map((item, index) => {
-                // FE: đánh số icon theo đúng index đang render.
-                const iconNo = index + 1;
-                const feShowIcon =
-                  roomKey === "PG"
-                    ? PG_SHOWICON_BY_NAME.get(normalizeForOrder(item.name))
-                    : roomKey === "BNG"
-                      ? BNG_SHOWICON_BY_NAME.get(normalizeForOrder(item.name))
-                      : undefined;
-                const imageUrl =
-                  item.showIcon ||
-                  feShowIcon ||
-                  `/assets/NH/${roomKey}/${roomKey}_${iconNo.toString().padStart(2, "0")}.png`;
-                return (
-                  <div
-                    key={item._id}
-                    className={
-                      isMobile
-                        ? ""
-                        : "transition-all duration-300 ease-in-out transform hover:scale-105"
-                    }
-                    style={{
-                      opacity: 1,
-                      animation: "fadeIn 0.3s ease-in-out",
-                    }}
-                  >
-                    <ProgressBar
-                      percentage={item.percent}
-                      title={item.name}
-                      imageUrl={imageUrl}
-                      id={item._id}
+
+                <h1 className="slot-lobby-title">{hallTitle}</h1>
+
+                <form
+                  className="slot-lobby-search"
+                  onSubmit={(e) => e.preventDefault()}
+                  role="search"
+                >
+                  <label className="slot-lobby-search__field">
+                    <span className="slot-lobby-search__icon" aria-hidden>
+                      &#128269;
+                    </span>
+                    <input
+                      type="search"
+                      className="slot-lobby-search__input"
+                      placeholder="Tìm kiếm game..."
+                      value={searchTerm}
+                      onChange={handleSearch}
+                      aria-label="Tìm kiếm game"
                     />
-                  </div>
-                );
-              })}
+                  </label>
+                  <button type="submit" className="slot-lobby-search__submit">
+                    <span aria-hidden>&#128269;</span>
+                    Tìm ngay
+                  </button>
+                </form>
+              </div>
+            </section>
+
+            <div className="slot-game-grid">
+              {visibleTableList.length === 0 ? (
+                <p className="slot-game-empty">Không tìm thấy game phù hợp.</p>
+              ) : (
+                visibleTableList.map((item, index) => {
+                  const iconNo = index + 1;
+                  const feShowIcon =
+                    roomKey === "PG"
+                      ? PG_SHOWICON_BY_NAME.get(normalizeForOrder(item.name))
+                      : roomKey === "BNG"
+                        ? BNG_SHOWICON_BY_NAME.get(normalizeForOrder(item.name))
+                        : undefined;
+                  const imageUrl =
+                    item.showIcon ||
+                    feShowIcon ||
+                    `/assets/NH/${roomKey}/${roomKey}_${iconNo.toString().padStart(2, "0")}.png`;
+
+                  return (
+                    <div key={item._id} className="slot-game-grid__item">
+                      <ProgressBar
+                        percentage={item.percent}
+                        title={item.name}
+                        imageUrl={imageUrl}
+                        id={item._id}
+                      />
+                    </div>
+                  );
+                })
+              )}
             </div>
-            <div style={{ height: 200 }}></div>
+            <div style={{ height: 120 }} aria-hidden />
           </div>
         </div>
       )}
       <ModalConfirmLogout
         isShowLogout={isShowLogout}
-        setIsShowLogout={() => {
-          setIsShowLogout(false);
-        }}
+        setIsShowLogout={() => setIsShowLogout(false)}
       />
     </div>
   );

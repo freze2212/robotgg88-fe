@@ -166,7 +166,7 @@ export default function BaccaratRoomList() {
         title: "Lỗi tải dữ liệu",
         text: "Vui lòng nạp thêm xu vào tài khoản!",
         customClass: {
-          popup: "bg-custom-image text-white",
+          popup: "custom-swal",
         },
       });
     }
@@ -340,7 +340,7 @@ export default function BaccaratRoomList() {
   }, [token]);
 
   return (
-    <div className="casino-lobby-page">
+    <div className="page-with-header casino-lobby-page">
       <Header setIsShowLogout={() => setIsShowLogout(true)} />
 
       {/* Marquee bám sát header */}

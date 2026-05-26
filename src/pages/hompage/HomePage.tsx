@@ -1,399 +1,140 @@
-import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import { useMemo, useState } from "react";
 import Header from "../../components/Header";
 import Gg88GameTypeModal from "../../components/Gg88GameTypeModal";
-import HallNoticeModal from "../../components/HallNoticeModal";
-import HomeMarquee from "../../components/HomeMarquee";
 import ModalConfirmLogout from "../../components/ModalConfirmLogout";
 import { getAssetUrl } from "../../utils/assetUrl";
-import { LOBBY_CAROUSEL, cn, type TrackPhase } from "./homeLobby.constants";
 import { useNavigate } from "react-router-dom";
 import "./HomePage.css";
 
-export type HallItem = {
-  id: string;
-  brand: string;
-  name: string;
-  logo: string;
-  percent: number;
-  href: string;
-};
-
-const HALLS: HallItem[] = [
-  { id: "78win", brand: "78win", name: "GG88", logo: "/assets/logo-78win.png", percent: 0, href: "/casino" },
-  { id: "8kbet", brand: "8Kbet", name: "GG88", logo: "/assets/logo-8kbet.png", percent: 0, href: "/casino" },
-  { id: "gg88", brand: "GG88", name: "GG88", logo: "/assets/logo-gg88.png", percent: 0, href: "/" },
-  { id: "xx88", brand: "XX88", name: "GG88", logo: "/assets/logo-xx88.png", percent: 0, href: "/NH" },
-  { id: "c168", brand: "C168", name: "GG88", logo: "/assets/logo-c168.png", percent: 0, href: "/NH" },
+const LOGIN_PREFIXES = [
+  "iron",
+  "slot",
+  "zeus",
+  "neo",
+  "ghost",
+  "king",
+  "vip",
+  "max",
+  "pro",
+  "win",
+  "bet",
+  "ace",
 ];
 
-function randomIntInclusive(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-function buildRandomHallPercents(): Record<string, number> {
-  const map: Record<string, number> = {};
-  for (const h of HALLS) {
-    map[h.id] =
-      h.id === "gg88" ? randomIntInclusive(91, 99) : randomIntInclusive(30, 60);
+function buildLoginFeedLines(count: number): string[] {
+  const lines: string[] = [];
+  for (let i = 0; i < count; i++) {
+    const prefix =
+      LOGIN_PREFIXES[Math.floor(Math.random() * LOGIN_PREFIXES.length)];
+    const suffix = String(Math.floor(Math.random() * 900) + 100);
+    lines.push(`${prefix}${suffix}`);
   }
-  return map;
+  return lines;
 }
 
 const HomePage = () => {
   const [isShowLogout, setIsShowLogout] = useState(false);
-  const [hallNoticeBrand, setHallNoticeBrand] = useState<string | null>(null);
   const [showGg88GameModal, setShowGg88GameModal] = useState(false);
-  const [startIndex, setStartIndex] = useState(0);
-  const [trackPhase, setTrackPhase] = useState<TrackPhase>("idle");
-  const [carouselBusy, setCarouselBusy] = useState(false);
-  const navBusyRef = useRef(false);
   const navigate = useNavigate();
-  const pendingNavRef = useRef<{
-    dir: "next" | "prev";
-    apply: () => void;
-  } | null>(null);
-  const phaseRef = useRef<TrackPhase>("idle");
-  const touchStartXRef = useRef(0);
 
-  useEffect(() => {
-    phaseRef.current = trackPhase;
-  }, [trackPhase]);
-
-  const n = HALLS.length;
-  const hallPercents = useMemo(() => buildRandomHallPercents(), []);
-
-  const visibleHalls = useMemo(() => {
-    return Array.from({ length: 5 }, (_, i) => {
-      const h = HALLS[(startIndex + i) % n];
-      return { ...h, percent: hallPercents[h.id] };
-    });
-  }, [startIndex, n, hallPercents]);
-
-  const hallsWithPercent = useMemo(
-    () => HALLS.map((h) => ({ ...h, percent: hallPercents[h.id] })),
-    [hallPercents]
-  );
-
-  /** Mobile: GG88 lên đầu danh sách */
-  const hallsWithPercentMobile = useMemo(() => {
-    const list = HALLS.map((h) => ({ ...h, percent: hallPercents[h.id] }));
-    const gg = list.find((h) => h.id === "gg88");
-    if (!gg) return list;
-    return [gg, ...list.filter((h) => h.id !== "gg88")];
-  }, [hallPercents]);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
-  const handleTrackTransitionEnd = useCallback(
-    (e: React.TransitionEvent<HTMLDivElement>) => {
-      if (
-        e.propertyName !== "transform" &&
-        e.propertyName !== "-webkit-transform"
-      )
-        return;
-      if (e.target !== e.currentTarget) return;
-      const pending = pendingNavRef.current;
-      if (!pending) return;
-      const p = phaseRef.current;
-      if (p !== "exit-next" && p !== "exit-prev") return;
-
-      pendingNavRef.current = null;
-      pending.apply();
-      setTrackPhase(pending.dir === "next" ? "enter-next" : "enter-prev");
-    },
-    []
-  );
-
-  const handleTrackAnimationEnd = useCallback(
-    (e: React.AnimationEvent<HTMLDivElement>) => {
-      if (e.target !== e.currentTarget) return;
-      if (!e.animationName.includes("home-lobby-enter")) return;
-      const p = phaseRef.current;
-      if (p !== "enter-next" && p !== "enter-prev") return;
-      setTrackPhase("idle");
-      navBusyRef.current = false;
-      setCarouselBusy(false);
-    },
-    []
-  );
-
-  const runCarouselNav = useCallback(
-    (dir: "next" | "prev", apply: () => void) => {
-      if (navBusyRef.current) return;
-      const reduced =
-        typeof window !== "undefined" &&
-        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (reduced) {
-        apply();
-        return;
-      }
-
-      navBusyRef.current = true;
-      setCarouselBusy(true);
-      pendingNavRef.current = { dir, apply };
-      setTrackPhase(dir === "next" ? "exit-next" : "exit-prev");
-    },
-    []
-  );
-
-  useEffect(() => {
-    const p = trackPhase;
-    if (p !== "exit-next" && p !== "exit-prev") return;
-    if (!pendingNavRef.current) return;
-    const id = window.setTimeout(() => {
-      const pending = pendingNavRef.current;
-      if (!pending) return;
-      if (phaseRef.current !== "exit-next" && phaseRef.current !== "exit-prev")
-        return;
-      pendingNavRef.current = null;
-      pending.apply();
-      setTrackPhase(pending.dir === "next" ? "enter-next" : "enter-prev");
-    }, LOBBY_CAROUSEL.FALLBACK_EXIT_MS);
-    return () => window.clearTimeout(id);
-  }, [trackPhase]);
-
-  useEffect(() => {
-    const p = trackPhase;
-    if (p !== "enter-next" && p !== "enter-prev") return;
-    const id = window.setTimeout(() => {
-      if (phaseRef.current !== "enter-next" && phaseRef.current !== "enter-prev")
-        return;
-      setTrackPhase("idle");
-      navBusyRef.current = false;
-      setCarouselBusy(false);
-    }, LOBBY_CAROUSEL.FALLBACK_ENTER_MS);
-    return () => window.clearTimeout(id);
-  }, [trackPhase]);
-
-  const goBack = useCallback(() => {
-    runCarouselNav("prev", () => {
-      setStartIndex((s) => (s - 1 + n) % n);
-    });
-  }, [n, runCarouselNav]);
-
-  const goNext = useCallback(() => {
-    runCarouselNav("next", () => {
-      setStartIndex((s) => (s + 1) % n);
-    });
-  }, [n, runCarouselNav]);
-
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (carouselBusy || navBusyRef.current) return;
-      const t = e.target as HTMLElement | null;
-      if (t?.closest("input, textarea, select, [contenteditable=true]")) return;
-      if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        goBack();
-      } else if (e.key === "ArrowRight") {
-        e.preventDefault();
-        goNext();
-      }
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [carouselBusy, goBack, goNext]);
-
-  const goToIndex = useCallback(
-    (i: number) => {
-      if (i === startIndex) return;
-      const forward = (i - startIndex + n) % n;
-      const backward = (startIndex - i + n) % n;
-      const dir: "next" | "prev" = forward <= backward ? "next" : "prev";
-      runCarouselNav(dir, () => setStartIndex(i));
-    },
-    [n, startIndex, runCarouselNav]
-  );
-
-  const handleFrameClick = (hall: HallItem) => {
-    if (hall.id !== "gg88") {
-      setHallNoticeBrand(hall.brand);
-      return;
-    }
-    setShowGg88GameModal(true);
-  };
-
-  const onSwipeTouchStart = useCallback((e: React.TouchEvent) => {
-    touchStartXRef.current = e.touches[0].clientX;
-  }, []);
-
-  const onSwipeTouchEnd = useCallback(
-    (e: React.TouchEvent) => {
-      if (carouselBusy || navBusyRef.current) return;
-      const dx = e.changedTouches[0].clientX - touchStartXRef.current;
-      const threshold = 56;
-      if (Math.abs(dx) < threshold) return;
-      if (dx < 0) goNext();
-      else goBack();
-    },
-    [carouselBusy, goBack, goNext]
+  const statusLines = useMemo(() => buildLoginFeedLines(14), []);
+  const statusFeedLines = useMemo(
+    () => [...statusLines, ...statusLines],
+    [statusLines]
   );
 
   return (
-    <div className="home-page">
+    <div className="page-with-header home-page">
       <Header setIsShowLogout={() => setIsShowLogout(true)} />
 
-      <HomeMarquee />
+      <div className="home-hub">
+        <h1 className="home-hub__title">VÀO SẢNH GG88</h1>
 
-      <h1 className="home-section-title">CHỌN SẢNH GAME</h1>
+        <div className="home-hub__grid">
+          {/* Trái — Hướng dẫn & VIP */}
+          <aside className="home-panel home-panel--guide">
+            <h2 className="home-panel__head">HƯỚNG DẪN &amp; VIP</h2>
+            <div className="home-panel__body">
+              <h3 className="home-panel__section-title">
+                HƯỚNG DẪN ĐĂNG KÝ
+              </h3>
+              <ol className="home-panel__steps">
+                <li>
+                  Truy cập trang chủ GG88 và chọn mục Đăng ký tài khoản mới.
+                </li>
+                <li>
+                  Điền đầy đủ thông tin, xác minh số điện thoại và hoàn tất đăng
+                  ký.
+                </li>
+              </ol>
 
-      {/* PC / tablet ≥768px: carousel như cũ */}
-      <section
-        className="home-lobby home-lobby--desktop-only"
-        aria-label="Danh sách sảnh game"
-        aria-roledescription="carousel"
-        aria-busy={carouselBusy}
-      >
-        <div
-          className={cn(
-            "home-lobby__frames",
-            trackPhase !== "idle" && "home-lobby__frames--moving"
-          )}
-          onTouchStart={onSwipeTouchStart}
-          onTouchEnd={onSwipeTouchEnd}
-        >
-          <div
-            className={cn(
-              "home-lobby__track",
-              trackPhase !== "idle" && `home-lobby__track--${trackPhase}`
-            )}
-            onTransitionEnd={handleTrackTransitionEnd}
-            onAnimationEnd={handleTrackAnimationEnd}
-          >
-            {visibleHalls.map((hall, slot) => {
-              const isCenter = slot === 2;
-              return (
-                <button
-                  key={`${hall.id}-${startIndex}-${slot}`}
-                  type="button"
-                  className={`home-frame ${isCenter ? "home-frame--center" : ""}`}
-                  style={{
-                    backgroundImage: `url(${getAssetUrl("/assets/bg-modal.png")})`,
-                  }}
-                  onClick={() => handleFrameClick(hall)}
-                >
-                  <div className="home-frame__inner">
-                    <div className="home-frame__logo-wrap">
-                      <img
-                        className="home-frame__logo"
-                        src={getAssetUrl(hall.logo)}
-                        alt={hall.brand}
-                        draggable={false}
-                      />
-                    </div>
-                  </div>
-                  <span className="home-frame__label">{hall.brand}</span>
-                  <div className="home-frame__percent-wrap">
-                    <span
-                      className="home-frame__percent"
-                      style={{
-                        backgroundImage: `url(${getAssetUrl("/assets/bg-percent.png")})`,
-                      }}
-                    >
-                      {hall.percent}%
-                    </span>
-                  </div>
-                </button>
-              );
-            })}
-          </div>
-        </div>
+              <h3 className="home-panel__section-title">
+                NÂNG CẤP VIP MEMBER
+              </h3>
+              <p className="home-panel__text">
+                Trở thành VIP để nhận ưu đãi nạp, hoàn trả và hỗ trợ kỹ thuật
+                ưu tiên khi sử dụng tool dự đoán GG88.
+              </p>
 
-        <div className="home-lobby__controls">
-          <button
-            type="button"
-            className="home-lobby__btn home-lobby__btn--nav"
-            onClick={goBack}
-            aria-label="Sảnh trước"
-            disabled={carouselBusy}
-          >
-            <span className="home-lobby__btn-icon" aria-hidden>
-              ‹
-            </span>
-            <span>BACK</span>
-          </button>
-          <div
-            className="home-lobby__dots"
-            role="tablist"
-            aria-label="Chọn sảnh"
-          >
-            {HALLS.map((hall, i) => (
+              <div className="home-panel__vip-box">
+                <p>
+                  <strong>Nạp tích lũy tối thiểu 3,000,000 VNĐ</strong> để được
+                  xét duyệt nâng hạng VIP Member.
+                </p>
+              </div>
+
               <button
-                key={hall.id}
                 type="button"
-                role="tab"
-                aria-selected={startIndex === i}
-                aria-label={`${hall.brand}, sảnh ${i + 1} / ${HALLS.length}`}
-                className={cn(
-                  "home-lobby__dot",
-                  startIndex === i && "home-lobby__dot--active"
-                )}
-                onClick={() => goToIndex(i)}
-                disabled={carouselBusy}
-              />
-            ))}
-          </div>
-          <button
-            type="button"
-            className="home-lobby__btn home-lobby__btn--nav"
-            onClick={goNext}
-            aria-label="Sảnh sau"
-            disabled={carouselBusy}
-          >
-            <span>NEXT</span>
-            <span className="home-lobby__btn-icon" aria-hidden>
-              ›
-            </span>
-          </button>
-        </div>
-      </section>
+                className="home-panel__btn"
+                onClick={() => navigate("/casino/lobby")}
+              >
+                KẾT NỐI NGAY
+              </button>
+            </div>
+          </aside>
 
-      {/* Chỉ mobile (max-width: 767px): lưới 2 cột, 5 thẻ đều nhau */}
-      <section className="home-lobby home-lobby--mobile-only" aria-label="Danh sách sảnh game">
-        <div className="home-lobby__grid">
-          {hallsWithPercentMobile.map((hall) => (
-            <button
-              key={hall.id}
-              type="button"
-              className="home-frame home-frame--grid"
-              style={{
-                backgroundImage: `url(${getAssetUrl("/assets/bg-modal.png")})`,
-              }}
-              onClick={() => handleFrameClick(hall)}
-            >
-              <div className="home-frame__inner">
-                <div className="home-frame__logo-wrap">
-                  <img
-                    className="home-frame__logo"
-                    src={getAssetUrl(hall.logo)}
-                    alt={hall.brand}
-                    draggable={false}
-                  />
+          {/* Giữa — GG88 */}
+          <section className="home-panel home-panel--main" aria-label="GG88">
+            <div className="home-panel__card">
+              <div className="home-panel__logo-wrap">
+                <img
+                  src={getAssetUrl("/assets/logo-gg88.png")}
+                  alt="GG88"
+                  className="home-panel__logo"
+                />
+              </div>
+              <p className="home-panel__brand">GG88</p>
+              <button
+                type="button"
+                className="home-panel__btn"
+                onClick={() => setShowGg88GameModal(true)}
+              >
+                KÍCH HOẠT TOOL
+              </button>
+            </div>
+          </section>
+
+          {/* Phải — Trạng thái hệ thống */}
+          <aside className="home-panel home-panel--status">
+            <h2 className="home-panel__head home-panel__head--status">
+              <span className="home-panel__head-dot" aria-hidden />
+              TRẠNG THÁI HỆ THỐNG
+            </h2>
+            <div className="home-panel__body">
+              <div className="home-status-feed" aria-live="polite">
+                <div className="home-status-feed__track">
+                  {statusFeedLines.map((user, i) => (
+                    <p className="home-status-feed__line" key={`${user}-${i}`}>
+                      <span className="home-status-feed__user">{user}</span> vừa
+                      đăng nhập vào hệ thống
+                    </p>
+                  ))}
                 </div>
               </div>
-              <span className="home-frame__label">{hall.brand}</span>
-              <div className="home-frame__percent-wrap">
-                <span
-                  className="home-frame__percent"
-                  style={{
-                    backgroundImage: `url(${getAssetUrl("/assets/bg-percent.png")})`,
-                  }}
-                >
-                  {hall.percent}%
-                </span>
-              </div>
-            </button>
-          ))}
+            </div>
+          </aside>
         </div>
-      </section>
-
-      <HallNoticeModal
-        isOpen={hallNoticeBrand !== null}
-        onClose={() => setHallNoticeBrand(null)}
-        hallBrand={hallNoticeBrand ?? ""}
-      />
+      </div>
 
       <Gg88GameTypeModal
         isOpen={showGg88GameModal}
@@ -402,9 +143,7 @@ const HomePage = () => {
 
       <ModalConfirmLogout
         isShowLogout={isShowLogout}
-        setIsShowLogout={() => {
-          setIsShowLogout(false);
-        }}
+        setIsShowLogout={() => setIsShowLogout(false)}
       />
     </div>
   );

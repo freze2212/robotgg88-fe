@@ -1,26 +1,17 @@
 import React from "react";
 
+const BG_PC_URL = `${process.env.PUBLIC_URL || ""}/assets/bg-pc.png`;
+
 /**
- * Video nền toàn màn hình: PC dùng bg-pc.mp4, mobile dùng bg-mb.mp4
+ * Nền toàn màn hình: dùng ảnh bg-pc.png (class bg-pc)
  */
 const BackgroundVideo: React.FC = () => {
   return (
     <div
-      className="fixed inset-0 w-full h-full overflow-hidden"
-      style={{ zIndex: 0 }}
+      className="bg-pc"
+      style={{ backgroundImage: `url(${BG_PC_URL})` }}
       aria-hidden
-    >
-      <video
-        className="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto object-cover -translate-x-1/2 -translate-y-1/2"
-        autoPlay
-        loop
-        muted
-        playsInline
-      >
-        <source src="/assets/bg-mb.mp4" type="video/mp4" media="(max-width: 768px)" />
-        <source src="/assets/bg-pc.mp4" type="video/mp4" />
-      </video>
-    </div>
+    />
   );
 };
 

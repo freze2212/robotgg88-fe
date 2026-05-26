@@ -58,7 +58,7 @@ const HallNoticeModal: React.FC<HallNoticeModalProps> = ({
       <div
         className="hall-notice-modal__panel"
         style={{
-          backgroundImage: `url(${getAssetUrl("/assets/bg-modal.png")})`,
+          backgroundImage: `url(${getAssetUrl("/assets/frame-popup.png")})`,
         }}
       >
         <div className="hall-notice-modal__inner">

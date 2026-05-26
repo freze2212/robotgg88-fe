@@ -28,7 +28,7 @@ function formatConfirmTableCode(raw: string): string {
 }
 
 /**
- * Popup xác nhận vào bàn — nền bg-result + khung hacker.
+ * Popup xác nhận vào bàn — nền frame-popup.
  */
 const LobbyConfirmTableModal: React.FC<LobbyConfirmTableModalProps> = ({
   open,
@@ -64,17 +64,12 @@ const LobbyConfirmTableModal: React.FC<LobbyConfirmTableModalProps> = ({
           ×
         </button>
 
-        <div className="lobby-confirm__panel">
-          {/* Nền ảnh tách lớp — giữ đúng tỉ lệ 445:312 như thẻ lobby, không kéo méo */}
-          <div
-            className="lobby-confirm__bg"
-            style={{
-              backgroundImage: `url(${getAssetUrl("/assets/bg-result.png")})`,
-            }}
-            aria-hidden
-          />
-          <div className="lobby-confirm__grid" aria-hidden />
-
+        <div
+          className="lobby-confirm__panel"
+          style={{
+            backgroundImage: `url(${getAssetUrl("/assets/frame-popup.png")})`,
+          }}
+        >
           <header className="lobby-confirm__header">
             <span className="lobby-confirm__warn" aria-hidden>
               ⚠
@@ -123,7 +118,7 @@ const LobbyConfirmTableModal: React.FC<LobbyConfirmTableModalProps> = ({
               className="lobby-confirm__btn lobby-confirm__btn--danger"
               onClick={onClose}
             >
-              Hủy
+              &gt; HỦY &lt;
             </button>
           </div>
         </div>

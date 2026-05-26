@@ -1,4 +1,4 @@
-/* Popup CHỌN LOẠI GAME — GG88 (bg-modal + 2 nút gradient) */
+/* Popup CHỌN LOẠI GAME — frame-popup + nút gradient vàng cam */
 
 .gg88-game-modal {
   position: fixed;
@@ -7,8 +7,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px 16px;
+  padding: max(16px, env(safe-area-inset-top, 0px)) 16px
+    max(16px, env(safe-area-inset-bottom, 0px));
   box-sizing: border-box;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .gg88-game-modal__backdrop {
@@ -17,8 +20,8 @@
   margin: 0;
   padding: 0;
   border: none;
-  background: rgba(0, 8, 10, 0.82);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(3px);
   cursor: pointer;
 }
 
@@ -27,15 +30,16 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 460px;
-  min-height: 280px;
+  max-width: 520px;
+  aspect-ratio: 520 / 380;
+  max-height: min(85vh, 520px);
   padding: 0;
   box-sizing: border-box;
   border: none;
-  border-radius: 4px;
+  border-radius: 0;
   overflow: hidden;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6);
-  background-color: #040d0c;
+  box-shadow: 0 20px 56px rgba(0, 0, 0, 0.65);
+  background-color: transparent;
   background-repeat: no-repeat;
   background-position: center center;
   background-size: 100% 100%;
@@ -64,23 +68,21 @@
   box-sizing: border-box;
   width: 100%;
   min-height: 0;
-  padding: clamp(24px, 8%, 44px) clamp(20px, 6%, 36px) clamp(24px, 8%, 44px);
-  gap: clamp(20px, 4vw, 28px);
+  padding: 14% 16% 12%;
+  gap: clamp(16px, 4vw, 24px);
 }
 
 .gg88-game-modal__title {
   margin: 0;
   width: 100%;
   text-align: center;
-  font-family: "Roboto", system-ui, sans-serif;
-  font-size: clamp(1.15rem, 3.5vw, 1.45rem);
-  font-weight: 900;
-  letter-spacing: 0.1em;
-  color: #ffe066;
+  font-family: "Roboto", Arial, sans-serif;
+  font-size: clamp(1.1rem, 3.2vw, 1.35rem);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #ffff00;
   text-transform: uppercase;
-  text-shadow:
-    0 0 12px rgba(255, 224, 102, 0.55),
-    0 0 24px rgba(255, 180, 0, 0.25);
+  text-shadow: 0 0 10px rgba(255, 255, 0, 0.4);
   line-height: 1.2;
 }
 
@@ -88,45 +90,62 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 14px;
+  gap: 12px;
   width: 100%;
-  max-width: 320px;
+  max-width: 100%;
 }
 
 .gg88-game-modal__choice {
   display: block;
   width: 100%;
-  padding: 16px 24px;
+  padding: 14px 20px;
   border: none;
-  border-radius: 12px;
+  border-radius: 8px;
   cursor: pointer;
-  font-family: "Roboto", system-ui, sans-serif;
-  font-size: 1.05rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
+  font-family: "Roboto", Arial, sans-serif;
+  font-size: clamp(0.95rem, 2.8vw, 1.1rem);
+  font-weight: 900;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #fff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
-  background: linear-gradient(
-    180deg,
-    #00d4c4 0%,
-    #00a896 45%,
-    #008f82 100%
-  );
-  box-shadow:
-    0 0 16px rgba(0, 255, 200, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  transition:
-    filter 0.2s ease,
-    transform 0.15s ease;
+  color: #000;
+  background: #ffcc00;
+  box-shadow: 0 2px 12px rgba(255, 204, 0, 0.35);
+  transition: filter 0.2s ease, transform 0.15s ease;
 }
 
 .gg88-game-modal__choice:hover {
-  filter: brightness(1.08);
+  filter: brightness(1.06);
 }
 
 .gg88-game-modal__choice:active {
   transform: scale(0.98);
+  filter: brightness(0.95);
+}
+
+@media (max-width: 480px) {
+  .gg88-game-modal {
+    padding: max(10px, env(safe-area-inset-top, 0px)) 12px
+      max(10px, env(safe-area-inset-bottom, 0px));
+  }
+
+  .gg88-game-modal__panel {
+    width: min(100%, calc(100vw - 24px));
+    max-width: min(100%, calc(100vw - 24px));
+    max-height: min(88dvh, 480px);
+    aspect-ratio: 520 / 400;
+  }
+
+  .gg88-game-modal__inner {
+    padding: 18% 12% 14%;
+    gap: 12px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .gg88-game-modal__choice {
+    min-height: 44px;
+    padding: 12px 16px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

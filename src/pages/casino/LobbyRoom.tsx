@@ -433,7 +433,7 @@ const LobbyRoom: React.FC = () => {
               title: "Lỗi tải dữ liệu",
               text: message,
               customClass: {
-                popup: "bg-custom-image text-white",
+                popup: "custom-swal",
               },
             });
             navigate("/casino/lobby");
@@ -753,7 +753,7 @@ const LobbyRoom: React.FC = () => {
   );
 
   return (
-    <>
+    <div className="page-with-header">
       <Header setIsShowLogout={() => setIsShowLogout(true)} />
       <HomeMarquee className="home-marquee--tight home-marquee--lobby" />
       <ModalConfirmLogout
@@ -1026,7 +1026,7 @@ const LobbyRoom: React.FC = () => {
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
