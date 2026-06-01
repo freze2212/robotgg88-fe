@@ -9,6 +9,7 @@ import { getAssetUrl } from "../../utils/assetUrl";
 import ResultTable from "../../components/ResultTable";
 import HackerLiveFeed from "../../components/HackerLiveFeed";
 import LobbyConfirmTableModal from "../../components/LobbyConfirmTableModal";
+import "../../pages/NH/HomeNH.css";
 import "./LobbyCasino.css";
 
 /** Đếm P / Hòa / B từ totalRound (cùng logic symbol với ResultTable) */
@@ -355,16 +356,13 @@ export default function BaccaratRoomList() {
             <div className="casino-lobby-hero__inner">
               <button
                 type="button"
-                className="casino-lobby-back"
+                className="casino-lobby-back slot-lobby-back"
                 onClick={() => navigate("/")}
                 aria-label="Về trang chủ"
               >
-                <img
-                  className="casino-lobby-back__icon"
-                  src={getAssetUrl("/assets/arrow-back.png")}
-                  alt=""
-                  aria-hidden
-                />
+                <span className="slot-lobby-back__chevrons" aria-hidden>
+                  &laquo;&laquo;
+                </span>
                 BACK
               </button>
 

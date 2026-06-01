@@ -14,7 +14,7 @@ export type Gg88GameTypeModalProps = {
 };
 
 /**
- * Popup chọn loại game GG88 — nền frame-popup, SLOT GAME / BẮN CÁ.
+ * Popup chọn loại game GG88 — nền frame-popup, SLOT GAME / Baccarat.
  */
 const Gg88GameTypeModal: React.FC<Gg88GameTypeModalProps> = ({
   isOpen,
@@ -88,7 +88,7 @@ const Gg88GameTypeModal: React.FC<Gg88GameTypeModalProps> = ({
               className="gg88-game-modal__choice"
               onClick={goBanCa}
             >
-              BẮN CÁ
+              Baccarat
             </button>
           </div>
         </div>

@@ -478,7 +478,6 @@ const LobbyRoom: React.FC = () => {
       });
     }
     if (dataRoom) {
-      // Khi có data thì đóng Swal
       Swal.close();
       setLoading(false);
     }
@@ -779,7 +778,9 @@ const LobbyRoom: React.FC = () => {
               className="room-cyber-back"
               onClick={() => navigate("/casino/lobby")}
             >
-              <img src={getAssetUrl("/assets/arrow-back.png")} alt="" />
+              <span className="room-cyber-back__chevrons" aria-hidden>
+                &laquo;&laquo;
+              </span>
               BACK
             </button>
           </div>

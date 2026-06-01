@@ -7,6 +7,12 @@ import "./Login.css";
 
 type AuthView = "login" | "register";
 
+const swalPopupClass = {
+  popup: "custom-swal",
+  title: "custom-title",
+  htmlContainer: "custom-text",
+};
+
 const Login: React.FC = () => {
   const Cookies = require("js-cookie");
 
@@ -35,11 +41,7 @@ const Login: React.FC = () => {
         icon: "error",
         title: "Lỗi đăng nhập",
         text: "Vui lòng điền đầy đủ thông tin",
-        customClass: {
-          popup: "custom-swal",
-          title: "custom-title",
-          htmlContainer: "custom-text",
-        },
+        customClass: swalPopupClass,
       });
       return;
     }
@@ -86,48 +88,29 @@ const Login: React.FC = () => {
 
       await new Promise((resolve) => setTimeout(resolve, 100));
 
-      if (
+      const isAdmin =
         status === 201 &&
-        (data.user.role === "SUPERADMIN" || data.user.role === "ADMIN")
-      ) {
-        Swal.fire({
-          icon: "success",
-          title: "Đăng nhập thành công",
-          customClass: {
-            popup: "custom-swal",
-            title: "custom-title",
-            htmlContainer: "custom-text",
-          },
-        });
-        setTimeout(() => {
-          window.location.href = "/admin";
-        }, 500);
-      } else {
-        Swal.fire({
-          icon: "success",
-          title: "Đăng nhập thành công",
-          text: "Vui lòng đợi ít phút.",
-          customClass: {
-            popup: "custom-swal",
-            title: "custom-title",
-            htmlContainer: "custom-text",
-          },
-        });
-        setTimeout(() => {
-          window.location.href = "/";
-        }, 500);
-      }
+        (data.user.role === "SUPERADMIN" || data.user.role === "ADMIN");
+
+      Swal.fire({
+        icon: "success",
+        title: "Đăng nhập thành công",
+        text: isAdmin ? undefined : "Vui lòng đợi ít phút.",
+        timer: 1200,
+        showConfirmButton: false,
+        customClass: swalPopupClass,
+      });
+
+      setTimeout(() => {
+        window.location.href = isAdmin ? "/admin" : "/";
+      }, 500);
     } catch (err: any) {
       if (err?.response?.status === 401) {
         Swal.fire({
           icon: "error",
           title: "Lỗi đăng nhập",
           text: "Tài khoản/mật khẩu không chính xác!",
-          customClass: {
-            popup: "custom-swal",
-            title: "custom-title",
-            htmlContainer: "custom-text",
-          },
+          customClass: swalPopupClass,
         });
       }
     } finally {
