@@ -239,7 +239,8 @@ const ModalUser: React.FC<IProps> = ({
   };
   return (
     <Modal
-      title="Create User"
+      className="admin-modal"
+      title={isShowCreate ? "Tạo người dùng" : "Cập nhật người dùng"}
       open={isShowCreate || isShowEdit}
       onCancel={() => {
         onCanEdit();
@@ -300,10 +301,11 @@ const ModalUser: React.FC<IProps> = ({
 
 
         <div className="flex justify-end gap-3">
-          <Button className="bg-green-500 text-white" htmlType="submit">
+          <Button className="admin-gold-button" htmlType="submit">
             Lưu
           </Button>
           <Button
+            className="admin-secondary-button"
             onClick={() => {
               onCanEdit();
               onCancel();

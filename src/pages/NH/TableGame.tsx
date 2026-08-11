@@ -100,6 +100,9 @@ const TableGameNew = () => {
       if (raw) {
         const u = JSON.parse(raw); u.coins = newCoins; localStorage.setItem("user_info", JSON.stringify(u));
       }
+      window.dispatchEvent(
+        new CustomEvent("user-coins-updated", { detail: { coins: newCoins } })
+      );
       return true;
     } catch (e) {
       return false;
@@ -695,6 +698,21 @@ const TableGameNew = () => {
 
     const displayCapital = Math.floor(value / 1000) * 1000;
 
+    // Charge before showing the progress screen so the balance changes as soon
+    // as the player starts a 10-token hack.
+    if (userCoins < 10) {
+      showInsufficientXuModal(10);
+      return;
+    }
+
+    setIsSpinning(true);
+    const charged = await deductCoins(10, "SPIN_START");
+    if (!charged) {
+      setIsSpinning(false);
+      showInsufficientXuModal(10);
+      return;
+    }
+
     setHackPopupMode("loading");
     setHackCapitalLabel(
       Number.isFinite(displayCapital) ? displayCapital.toLocaleString("vi-VN") : ""
@@ -716,8 +734,7 @@ const TableGameNew = () => {
       });
     }, 120);
 
-    // Chạy logic trừ token + tính toán song song
-    // Để đúng yêu cầu: phải chạy xong màn "đang phân tích" mới bắt đầu cập nhật kết quả.
+    // Token has already been charged; keep this screen focused on the analysis animation.
 
     // Đóng popup ngoài cùng trong giai đoạn loading (để không bị "thừa popup")
     setIsHackPopupOpen(false);
@@ -737,7 +754,7 @@ const TableGameNew = () => {
 
     // Chờ handleStart cập nhật xong kết quả (quay mồi/quay auto) thì mới đóng popup
     void (async () => {
-      await handleStart(rounded, 10);
+      await handleStart(rounded, 0);
       closeHackPopup();
     })();
   }, [hackPopupMode, hackProgress]);

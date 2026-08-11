@@ -92,15 +92,15 @@ const MenuAdmin: React.FC = () => {
   };
 
   return (
-    <div style={{ display: "flex" }}>
+    <div className="admin-layout">
       <Menu
+        className="admin-sidebar"
         mode="inline"
         defaultSelectedKeys={[selectedKey]}
         onSelect={onSelect}
-        style={{ width: 256, height: 1000 }}
         items={items}
       />
-      <div style={{ padding: "20px", flex: 1 }}>{renderContent()}</div>
+      <main className="admin-content">{renderContent()}</main>
     </div>
   );
 };

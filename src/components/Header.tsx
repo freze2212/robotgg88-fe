@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { getUserProfile } from "../utilities/axios.utilities";
 import "./Header.css";
 
@@ -17,18 +17,21 @@ const Header: React.FC<IProps> = ({ setIsShowLogout }) => {
   const userInfo = userInfoString ? JSON.parse(userInfoString) : null;
 
   const [userProfile, setUserProfile] = useState<any>(null);
+  const latestCoinsRef = useRef<number | null>(null);
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const data = await getUserProfile();
-        setUserProfile(data);
+        const coins = latestCoinsRef.current ?? data.coins;
+        const profile = { ...data, coins };
+        setUserProfile(profile);
         localStorage.setItem(
           "user_info",
           JSON.stringify({
-            coins: data.coins,
-            role: data.role,
-            userName: data.username,
+            coins,
+            role: profile.role,
+            userName: profile.username,
           })
         );
       } catch (err) {
@@ -37,6 +40,23 @@ const Header: React.FC<IProps> = ({ setIsShowLogout }) => {
     };
 
     fetchProfile();
+
+    const handleCoinsUpdated = (event: Event) => {
+      const coins = Number(
+        (event as CustomEvent<{ coins?: number }>).detail?.coins
+      );
+      if (!Number.isFinite(coins)) return;
+
+      latestCoinsRef.current = coins;
+      setUserProfile((current: any) => ({
+        ...(current ?? {}),
+        coins,
+      }));
+    };
+
+    window.addEventListener("user-coins-updated", handleCoinsUpdated);
+    return () =>
+      window.removeEventListener("user-coins-updated", handleCoinsUpdated);
   }, []);
 
   const userName = userProfile?.username ?? userInfo?.userName ?? "";

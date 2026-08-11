@@ -60,7 +60,13 @@ const ModalAppCoin: React.FC<IProps> = ({
   };
   
   return (
-    <Modal title="Thêm/Trừ xu" open={isShowCoin} onCancel={onCanCoin} footer={null}>
+    <Modal
+      className="admin-modal"
+      title="Điều chỉnh số xu"
+      open={isShowCoin}
+      onCancel={onCanCoin}
+      footer={null}
+    >
       <Form onFinish={handleAppCoin} layout="vertical">
         <Form.Item name="coin" label="Số xu">
           <Input defaultValue={0} />
@@ -73,10 +79,12 @@ const ModalAppCoin: React.FC<IProps> = ({
           </Radio.Group>
         </Form.Item>
         <div className="flex justify-end gap-3">
-          <Button className="bg-green-500 text-white" htmlType="submit">
+          <Button className="admin-gold-button" htmlType="submit">
             Lưu
           </Button>
-          <Button onClick={onCanCoin}>Đóng</Button>
+          <Button className="admin-secondary-button" onClick={onCanCoin}>
+            Đóng
+          </Button>
         </div>
       </Form>
     </Modal>

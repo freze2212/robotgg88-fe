@@ -109,23 +109,29 @@ const ListUser: React.FC = () => {
       align: "center",
       render: (data: DataType) => {
         return (
-          <div className="flex gap-3 justify-center items-center">
+          <div className="admin-user-actions">
             <Button
+              className="admin-icon-button admin-icon-button--add"
               icon={<PlusCircleOutlined />}
+              aria-label={`Điều chỉnh xu cho ${data.username}`}
               onClick={() => {
                 setIsShowAppCoin(true);
                 setIdUser(data._id);
               }}
             />
             <Button
+              className="admin-icon-button admin-icon-button--edit"
               icon={<EditOutlined />}
+              aria-label={`Sửa ${data.username}`}
               onClick={() => {
                 setIsShowEdit(true);
                 setDataEdit(data);
               }}
             />
             <Button
+              className="admin-icon-button admin-icon-button--delete"
               icon={<DeleteOutlined />}
+              aria-label={`Xóa ${data.username}`}
               onClick={() => handleDelete(data)}
             />
             {contextHolder}
@@ -170,23 +176,33 @@ const ListUser: React.FC = () => {
   }, [searchTerm, dataUser]);
 
   return (
-    <div className="flex grid gap-5">
-      <div className="flex justify-end">
+    <section className="admin-user-panel">
+      <div className="admin-user-panel__heading">
+        <div>
+          <span className="admin-user-panel__eyebrow">QUẢN LÝ TÀI KHOẢN</span>
+          <h1>Danh sách người dùng</h1>
+        </div>
         <Button
           type="primary"
-          className="bg-blue-500 "
+          className="admin-gold-button"
           onClick={() => setIsShowCreate(true)}
         >
-          Create
+          <PlusCircleOutlined /> Tạo người dùng
         </Button>
       </div>
       <Input
+        className="admin-search"
         type="search"
         placeholder="Tìm theo tên người dùng..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
       />
-      <Table<DataType> columns={columns} dataSource={filteredUsers} />
+      <Table<DataType>
+        className="admin-user-table"
+        columns={columns}
+        dataSource={filteredUsers}
+        rowKey="_id"
+      />
       <ModalUser
         isShowCreate={isShowCreate}
         isShowEdit={isShowEdit}
@@ -201,7 +217,7 @@ const ListUser: React.FC = () => {
         onCanCoin={() => setIsShowAppCoin(false)}
         onRefesh={() => setRefreshTrigger((prev) => prev + 1)}
       />
-    </div>
+    </section>
   );
 };
 

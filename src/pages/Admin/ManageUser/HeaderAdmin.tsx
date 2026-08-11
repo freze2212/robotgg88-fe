@@ -22,11 +22,16 @@ const HeaderAdmin = () => {
     />
   );
   return (
-    <div className="flex justify-end p-3 border-b-2">
+    <header className="admin-header">
+      <div className="admin-header__brand">
+        <span className="admin-header__eyebrow">GG88 CONTROL</span>
+        <strong>TRUNG TÂM QUẢN TRỊ</strong>
+      </div>
       <Space direction="vertical" size={16}>
         <Space wrap size={16}>
           <Dropdown overlay={menu} trigger={["hover"]}>
             <Avatar
+              className="admin-header__avatar"
               size="large"
               icon={<UserOutlined />}
               style={{ cursor: "pointer" }}
@@ -34,7 +39,7 @@ const HeaderAdmin = () => {
           </Dropdown>
         </Space>
       </Space>
-    </div>
+    </header>
   );
 };
 
