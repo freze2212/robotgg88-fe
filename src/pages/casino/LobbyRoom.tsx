@@ -441,7 +441,8 @@ const LobbyRoom: React.FC = () => {
         });
     };
 
-    // Sau khi vào bàn: trừ 5 xu mỗi 30 giây
+    // Trừ phí vào bàn ngay, sau đó trừ phí duy trì mỗi 30 giây.
+    void deductRoomFee();
     const feeInterval = window.setInterval(deductRoomFee, 30_000);
     return () => window.clearInterval(feeInterval);
   }, [token, navigate, id]);
@@ -453,6 +454,9 @@ const LobbyRoom: React.FC = () => {
       const userInfo = JSON.parse(userInfoString);
       userInfo.coins = coin;
       localStorage.setItem("user_info", JSON.stringify(userInfo));
+      window.dispatchEvent(
+        new CustomEvent("user-coins-updated", { detail: { coins: coin } })
+      );
     } catch {
       // ignore parse errors
     }
