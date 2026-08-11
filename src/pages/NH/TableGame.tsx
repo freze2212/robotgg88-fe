@@ -415,7 +415,7 @@ const TableGameNew = () => {
         </div>
       </div>
       
-      <div onclick="window.open('https://t.me/congnghemoi668', '_blank')" style="
+      <div onclick="window.open('https://t.me/CSKHDAILY_OFFICAL', '_blank')" style="
         margin-bottom: 25px; 
         font-size: 14px; 
         color: #64b5f6;
