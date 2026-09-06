@@ -1,28 +1,34 @@
 import React, { useState } from "react";
 import {
-  AppstoreOutlined,
-  HomeOutlined,
-  MailOutlined,
-  SettingOutlined,
+  DashboardOutlined,
   UserOutlined,
+  TeamOutlined,
+  AppstoreOutlined,
 } from "@ant-design/icons";
 import type { MenuProps } from "antd";
 import { Menu } from "antd";
 import ListUser from "./ManageUser/ListUser";
+import DashboardOverview from "./DashboardOverview";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
 const items: MenuItem[] = [
   {
     key: "1",
-    icon: <HomeOutlined />,
-    label: "Trang chủ",
+    icon: <DashboardOutlined />,
+    label: "Bảng điều khiển",
   },
   {
     key: "2",
     icon: <UserOutlined />,
-    label: "Quản lý User",
-    children: [{ key: "11", label: "Danh sách User" }],
+    label: "Quản lý Người dùng",
+    children: [
+      {
+        key: "11",
+        icon: <TeamOutlined />,
+        label: "Danh sách User",
+      },
+    ],
   },
 ];
 
@@ -50,21 +56,48 @@ const getLevelKeys = (items1: LevelKeysProps[]) => {
 const levelKeys = getLevelKeys(items as LevelKeysProps[]);
 
 const MenuAdmin: React.FC = () => {
-  const [stateOpenKeys, setStateOpenKeys] = useState(["2", "23"]);
+  const [stateOpenKeys, setStateOpenKeys] = useState(["2"]);
   const [selectedKey, setSelectedKey] = useState("1");
+  const [triggerCreateUser, setTriggerCreateUser] = useState(false);
 
   const onSelect: MenuProps["onSelect"] = ({ key }) => {
     setSelectedKey(key);
   };
 
+  const handleNavigateToUsers = () => {
+    setSelectedKey("11");
+    setStateOpenKeys(["2"]);
+  };
+
+  const handleOpenCreateUser = () => {
+    setSelectedKey("11");
+    setStateOpenKeys(["2"]);
+    setTriggerCreateUser(true);
+  };
+
   const renderContent = () => {
     switch (selectedKey) {
       case "1":
-        return <div>Trang chủ</div>;
+        return (
+          <DashboardOverview
+            onNavigateToUsers={handleNavigateToUsers}
+            onOpenCreateUser={handleOpenCreateUser}
+          />
+        );
       case "11":
-        return <ListUser />;
+        return (
+          <ListUser
+            initOpenCreate={triggerCreateUser}
+            onResetInitOpen={() => setTriggerCreateUser(false)}
+          />
+        );
       default:
-        return <div>Chọn chức năng từ menu</div>;
+        return (
+          <DashboardOverview
+            onNavigateToUsers={handleNavigateToUsers}
+            onOpenCreateUser={handleOpenCreateUser}
+          />
+        );
     }
   };
 
@@ -72,7 +105,6 @@ const MenuAdmin: React.FC = () => {
     const currentOpenKey = openKeys.find(
       (key) => stateOpenKeys.indexOf(key) === -1
     );
-    // open
     if (currentOpenKey !== undefined) {
       const repeatIndex = openKeys
         .filter((key) => key !== currentOpenKey)
@@ -80,26 +112,27 @@ const MenuAdmin: React.FC = () => {
 
       setStateOpenKeys(
         openKeys
-          // remove repeat key
           .filter((_, index) => index !== repeatIndex)
-          // remove current level all child
           .filter((key) => levelKeys[key] <= levelKeys[currentOpenKey])
       );
     } else {
-      // close
       setStateOpenKeys(openKeys);
     }
   };
 
   return (
     <div className="admin-layout">
-      <Menu
-        className="admin-sidebar"
-        mode="inline"
-        defaultSelectedKeys={[selectedKey]}
-        onSelect={onSelect}
-        items={items}
-      />
+      <aside className="admin-sidebar-wrapper">
+        <Menu
+          className="admin-sidebar"
+          mode="inline"
+          selectedKeys={[selectedKey]}
+          openKeys={stateOpenKeys}
+          onOpenChange={onOpenChange}
+          onSelect={onSelect}
+          items={items}
+        />
+      </aside>
       <main className="admin-content">{renderContent()}</main>
     </div>
   );

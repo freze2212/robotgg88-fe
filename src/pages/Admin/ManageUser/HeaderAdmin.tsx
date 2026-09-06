@@ -1,44 +1,79 @@
 import React from "react";
-import { LogoutOutlined, UserOutlined } from "@ant-design/icons";
-import { Avatar, Dropdown, Menu, Space } from "antd";
+import { LogoutOutlined, UserOutlined, CrownFilled, SafetyCertificateOutlined } from "@ant-design/icons";
+import { Avatar, Dropdown, MenuProps, Space, Tag } from "antd";
 
-const HeaderAdmin = () => {
+const HeaderAdmin: React.FC = () => {
   const Cookies = require("js-cookie");
+
+  const userInfoRaw = localStorage.getItem("user_info");
+  const userInfo = userInfoRaw ? JSON.parse(userInfoRaw) : null;
+  const username = userInfo?.userName || userInfo?.username || "Admin";
+  const role = userInfo?.role || "ADMIN";
 
   const handleLogout = () => {
     Cookies.remove("access_token");
-    window.location.reload();
+    localStorage.removeItem("user_info");
+    window.location.href = "/login";
   };
 
-  const menu = (
-    <Menu
-      items={[
-        {
-          key: "logout",
-          label: <span onClick={handleLogout}>Đăng xuất</span>,
-          icon: <LogoutOutlined />,
-        },
-      ]}
-    />
-  );
+  const menuItems: MenuProps["items"] = [
+    {
+      key: "user-info",
+      label: (
+        <div className="admin-dropdown-user-header">
+          <div className="admin-dropdown-user-name">{username}</div>
+          <div className="admin-dropdown-user-role">
+            <SafetyCertificateOutlined /> {role}
+          </div>
+        </div>
+      ),
+      disabled: true,
+    },
+    {
+      type: "divider",
+    },
+    {
+      key: "logout",
+      label: "Đăng xuất",
+      icon: <LogoutOutlined className="text-red-400" />,
+      danger: true,
+      onClick: handleLogout,
+    },
+  ];
+
   return (
     <header className="admin-header">
       <div className="admin-header__brand">
-        <span className="admin-header__eyebrow">GG88 CONTROL</span>
-        <strong>TRUNG TÂM QUẢN TRỊ</strong>
+        <div className="flex items-center gap-2">
+          <CrownFilled className="admin-header__crown" />
+          <span className="admin-header__eyebrow">GG88 SYSTEM CONTROL</span>
+        </div>
+        <strong>TRUNG TÂM QUẢN TRỊ CAO CẤP</strong>
       </div>
-      <Space direction="vertical" size={16}>
-        <Space wrap size={16}>
-          <Dropdown overlay={menu} trigger={["hover"]}>
-            <Avatar
-              className="admin-header__avatar"
-              size="large"
-              icon={<UserOutlined />}
-              style={{ cursor: "pointer" }}
-            />
-          </Dropdown>
-        </Space>
-      </Space>
+
+      <div className="admin-header__right">
+        <div className="admin-header__user-pill">
+          <Tag className="admin-role-badge">
+            <CrownFilled style={{ marginRight: 4 }} />
+            {role}
+          </Tag>
+          <span className="admin-header__username">{username}</span>
+        </div>
+
+        <Dropdown
+          menu={{ items: menuItems }}
+          trigger={["click", "hover"]}
+          placement="bottomRight"
+          overlayClassName="admin-dropdown-menu"
+        >
+          <Avatar
+            className="admin-header__avatar"
+            size={42}
+            icon={<UserOutlined />}
+            style={{ cursor: "pointer" }}
+          />
+        </Dropdown>
+      </div>
     </header>
   );
 };
